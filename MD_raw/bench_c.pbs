@@ -3,8 +3,8 @@
 #PBS -l select=1:ncpus=36
 #PBS -l place=excl
 #PBS -N bench_c
-#PBS -A d171
-#PBS -l walltime=0:14:0
+#PBS -A d171-s1898201
+#PBS -l walltime=1:40:0
 
 
 
@@ -13,6 +13,3 @@ cd $PBS_O_WORKDIR/C
 
 # Run the parallel program
 ./MD
-
-
-

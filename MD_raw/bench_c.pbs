@@ -12,4 +12,6 @@
 cd $PBS_O_WORKDIR/C
 
 # Run the parallel program
+echo 'RAW output'
+echo 'CFLAGS= -g -O0 -check=uninit -check-pointers:rw -no-vec'
 ./MD

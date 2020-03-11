@@ -1,0 +1,17 @@
+#!/bin/bash --login
+#
+#PBS -l select=1:ncpus=36
+#PBS -l place=excl
+#PBS -N bench_c
+#PBS -A d171-s1898201
+#PBS -l walltime=1:40:0
+
+
+
+# Switch to current working directory
+cd $PBS_O_WORKDIR/C
+
+# Run the parallel program
+echo 'RAW output'
+echo 'CFLAGS= -g -O0 -check=uninit -check-pointers:rw -no-vec'
+./MD

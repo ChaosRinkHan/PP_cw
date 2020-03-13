@@ -3,6 +3,7 @@
  *
  */
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include "coord.h"
 
@@ -22,9 +23,10 @@ void evolve(int count, double dt) {
 	for (step = 1; step <= count; step++) {
 		printf("timestep %d\n", step);
 		printf("collisions %d\n", collisions);
-		for (k = 0; k < Nbody; k++) {
-			r[k] = 0.0;
-		}
+		//for (k = 0; k < Nbody; k++) {
+		//	r[k] = 0.0;
+		//}
+		memset(r, 0., sizeof(double)*Nbody);
 /* set the viscosity term in the force calculation */
 		for (j = 0; j < Ndim; j++) {
 			visc_force(Nbody, f[j], vis, velo[j]);

@@ -11,6 +11,7 @@
 #include "coord.h"
 
 double second(void);
+
 int main(int argc, char *argv[]) {
 	int i, j;
 	FILE *in, *out;
@@ -40,11 +41,13 @@ int main(int argc, char *argv[]) {
 	pos[0] = calloc(Ndim * Nbody, sizeof(double));
 	velo[0] = calloc(Ndim * Nbody, sizeof(double));
 	delta_pos[0] = calloc(Ndim * Nbody * Nbody, sizeof(double));
+
 	for (i = 1; i < Ndim; i++) {
-		f[i] = f[0] + i * Nbody;
-		pos[i] = pos[0] + i * Nbody;
-		velo[i] = velo[0] + i * Nbody;
-		delta_pos[i] = delta_pos[0] + i * Nbody * Nbody;
+		int temp = i * Nbody;
+		f[i] = f[0] + temp;
+		pos[i] = pos[0] + temp;
+		velo[i] = velo[0] + temp;
+		delta_pos[i] = delta_pos[0] + temp * Nbody;
 	}
 
 /* read the initial data from a file */
@@ -100,17 +103,9 @@ int main(int argc, char *argv[]) {
 }
 
 double second() {
-/* struct timeval { long        tv_sec; 
-            long        tv_usec;        };
-
-struct timezone { int   tz_minuteswest;
-             int        tz_dsttime;      };     */
-
 	struct timeval tp;
 	struct timezone tzp;
-	int i;
-
-	i = gettimeofday(&tp, &tzp);
+	gettimeofday(&tp, &tzp);
 	return ((double) tp.tv_sec + (double) tp.tv_usec * 1.e-6);
 }
 

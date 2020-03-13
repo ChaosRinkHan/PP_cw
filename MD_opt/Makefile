@@ -1,7 +1,7 @@
 SRC=MD.c control.c util.c 
 OBJ=$(SRC:.c=.o)
 CC=icc 
-CFLAGS= -g -O3
+CFLAGS= -g -Ofast
 
 
 all: MD

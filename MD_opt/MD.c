@@ -22,22 +22,28 @@ void evolve(int count, double dt) {
 	for (step = 1; step <= count; step++) {
 		printf("timestep %d\n", step);
 		printf("collisions %d\n", collisions);
-
-/* set the viscosity term in the force calculation */
-		for (j = 0; j < Ndim; j++) {
-			visc_force(Nbody, f[j], vis, velo[j]);
-		}
-/* add the wind term in the force calculation */
-		for (j = 0; j < Ndim; j++) {
-			wind_force(Nbody, f[j], vis, wind[j]);
-		}
-/* calculate distance from central mass */
 		for (k = 0; k < Nbody; k++) {
 			r[k] = 0.0;
 		}
-		for (i = 0; i < Ndim; i++) {
-			add_norm(Nbody, r, pos[i]);
+/* set the viscosity term in the force calculation */
+		for (j = 0; j < Ndim; j++) {
+			visc_force(Nbody, f[j], vis, velo[j]);
+			wind_force(Nbody, f[j], vis, wind[j]);
+			add_norm(Nbody, r, pos[j]);
 		}
+/* add the wind term in the force calculation */
+		//for (j = 0; j < Ndim; j++) {
+		//	wind_force(Nbody, f[j], vis, wind[j]);
+		//}
+/* calculate distance from central mass */
+		//for (k = 0; k < Nbody; k++) {
+		//	r[k] = 0.0;
+		//}
+		// Moved to head
+
+		//for (i = 0; i < Ndim; i++) {
+		//	add_norm(Nbody, r, pos[i]);
+		//}
 		for (k = 0; k < Nbody; k++) {
 			r[k] = sqrt(r[k]);
 		}

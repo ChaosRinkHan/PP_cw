@@ -4,14 +4,18 @@
 #PBS -l place=excl
 #PBS -N bench_c
 #PBS -A d171-s1898201
-#PBS -l walltime=1:40:0
+#PBS -l walltime=0:5:0
 
 
 
 # Switch to current working directory
-cd $PBS_O_WORKDIR/C
+cd $PBS_O_WORKDIR/
 
 # Run the parallel program
 echo 'RAW output'
-echo 'CFLAGS= -g -O0 -check=uninit -check-pointers:rw -no-vec'
+echo 'CFLAGS= -g -O3'
+echo '# Change log
+- flag: -O3
+- line 77 for use sign
+- line 99 merge two for'
 ./MD

@@ -30,37 +30,38 @@ void evolve(int count, double dt) {
 /* set the viscosity term in the force calculation */
 		for (j = 0; j < Ndim; j++) {
 			visc_force(Nbody, f[j], vis, velo[j]);
-			wind_force(Nbody, f[j], vis, wind[j]);
-			add_norm(Nbody, r, pos[j]);
+			//wind_force(Nbody, f[j], vis, wind[j]);
+			//add_norm(Nbody, r, pos[j]);
 		}
 /* add the wind term in the force calculation */
-		//for (j = 0; j < Ndim; j++) {
-		//	wind_force(Nbody, f[j], vis, wind[j]);
-		//}
+		for (j = 0; j < Ndim; j++) {
+			wind_force(Nbody, f[j], vis, wind[j]);
+		}
 /* calculate distance from central mass */
 		//for (k = 0; k < Nbody; k++) {
 		//	r[k] = 0.0;
 		//}
 		// Moved to head
 
-		//for (i = 0; i < Ndim; i++) {
-		//	add_norm(Nbody, r, pos[i]);
-		//}
+		for (i = 0; i < Ndim; i++) {
+			add_norm(Nbody, r, pos[i]);
+		}
+
 		for (k = 0; k < Nbody; k++) {
 			r[k] = sqrt(r[k]);
 		}
 		/* calculate central force */
-		for (i = 0; i < Nbody; i++) {
-			for (l = 0; l < Ndim; l++) {
+		for (l = 0; l < Ndim; l++) {
+			for (i = 0; i < Nbody; i++) {
 				f[l][i] = f[l][i] -
 						force(G * mass[i] * M_central, pos[l][i], r[i]);
 			}
 		}
 /* calculate pairwise separation of particles */
 		k = 0;
-		for (i = 0; i < Nbody; i++) {
-			for (j = i + 1; j < Nbody; j++) {
-				for (l = 0; l < Ndim; l++) {
+		for (l = 0; l < Ndim; l++) {
+			for (i = 0; i < Nbody; i++){
+				for (j = i + 1; j < Nbody; j++) {
 					delta_pos[l][k] = pos[l][i] - pos[l][j];
 				}
 				k = k + 1;
@@ -82,12 +83,12 @@ void evolve(int count, double dt) {
  * add pairwise forces.
  */
 		k = 0;
-		for (i = 0; i < Nbody; i++) {
-			for (j = i + 1; j < Nbody; j++) {
+		for (l = 0; l < Ndim; l++){
+				for (i = 0; i < Nbody; i++) {
 				Size = radius[i] + radius[j];
 				collided = 0;
 				int sign = 1;
-				for (l = 0; l < Ndim; l++) {
+				for (j = i + 1; j < Nbody; j++){
 /*  flip force if close in */
 					sign = (delta_r[k] >= Size) ? -1 : 1;
 					f[l][i] = f[l][i] + sign *
@@ -105,7 +106,7 @@ void evolve(int count, double dt) {
 
 /* update positions */
 		for (i = 0; i < Nbody; i++) {
-			for (j = 0; j < Ndim; j++) {
+			for (j = 0; j < Ndim; j++){
 				pos[j][i] = pos[j][i] + dt * velo[j][i];
 				velo[j][i] = velo[j][i] + dt * (f[j][i] / mass[i]);
 			}
@@ -120,6 +121,7 @@ void evolve(int count, double dt) {
 	}
 
 }
+
 
 
 

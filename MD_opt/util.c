@@ -1,4 +1,4 @@
-#include <math.h>
+//#include <math.h>
 
 void visc_force(int N, double *f, double *vis, double *velo) {
 	int i;
@@ -19,9 +19,8 @@ void add_norm(int N, double *r, double *delta) {
 	}
 }
 
-double force(double W, double delta, double r) {
+inline double force(double W, double delta, double r) {
 	return W * delta / (r*r*r);
 }
-
 
 

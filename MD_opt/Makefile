@@ -1,7 +1,7 @@
 SRC=MD.c control.c util.c 
 OBJ=$(SRC:.c=.o)
 CC=icc 
-CFLAGS= -g -Ofast -qopt-report3
+CFLAGS= -g -Ofast -qopt-report5
 
 
 all: MD
@@ -15,7 +15,8 @@ output.dat: MD input.dat
 
 
 clean:
-	rm -f MD $(OBJ) 
+	rm -f MD $(OBJ)
+	rm -f *.optrpt
 
 $(OBJ) : coord.h Makefile
 

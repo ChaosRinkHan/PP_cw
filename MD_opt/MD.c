@@ -7,7 +7,7 @@
 #include <math.h>
 #include "coord.h"
 
-void visc_force(int N, double *f, double *vis, double *vel);
+void visc_force(int N, double *f, double * vis, double *vel);
 void add_norm(int N, double *r, double *delta);
 double force(double W, double delta, double r);
 void wind_force(int N, double *f, double *vis, double vel);
@@ -29,9 +29,12 @@ void evolve(int count, double dt) {
 		memset(r, 0., sizeof(double)*Nbody);
 /* set the viscosity term in the force calculation */
 		for (j = 0; j < Ndim; j++) {
-			visc_force(Nbody, f[j], vis, velo[j]);
-			//wind_force(Nbody, f[j], vis, wind[j]);
-			//add_norm(Nbody, r, pos[j]);
+			//visc_force(Nbody, f[j], vis, velo[j]);
+#pragma vector aligned
+#pragma ivdep
+			for (i = 0; i < Nbody; i++) {
+				f[j][i] = -vis[i] * velo[j][i];
+			}
 		}
 /* add the wind term in the force calculation */
 		for (j = 0; j < Ndim; j++) {
@@ -105,8 +108,8 @@ void evolve(int count, double dt) {
 		}
 
 /* update positions */
-		for (i = 0; i < Nbody; i++) {
-			for (j = 0; j < Ndim; j++){
+		for (j = 0; j < Ndim; j++){
+			for (i = 0; i < Nbody; i++) {
 				pos[j][i] = pos[j][i] + dt * velo[j][i];
 				velo[j][i] = velo[j][i] + dt * (f[j][i] / mass[i]);
 			}

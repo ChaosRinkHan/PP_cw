@@ -1,7 +1,9 @@
 //#include <math.h>
 
-void visc_force(int N, double *f, double *vis, double *velo) {
+void inline visc_force(int N, double *f, double * vis, double *velo) {
 	int i;
+#pragma vector aligned
+#pragma ivdep
 	for (i = 0; i < N; i++) {
 		f[i] = -vis[i] * velo[i];
 	}

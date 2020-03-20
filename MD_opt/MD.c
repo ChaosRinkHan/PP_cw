@@ -38,7 +38,12 @@ void evolve(int count, double dt) {
 		}
 /* add the wind term in the force calculation */
 		for (j = 0; j < Ndim; j++) {
-			wind_force(Nbody, f[j], vis, wind[j]);
+			//wind_force(Nbody, f[j], vis, wind[j]);
+#pragma vector aligned
+#pragma ivdep
+			for (i = 0; i < Nbody; i++) {
+				f[j][i] -= - vis[i] * wind[j];
+			}
 		}
 /* calculate distance from central mass */
 		//for (k = 0; k < Nbody; k++) {
@@ -47,7 +52,12 @@ void evolve(int count, double dt) {
 		// Moved to head
 
 		for (i = 0; i < Ndim; i++) {
-			add_norm(Nbody, r, pos[i]);
+			//add_norm(Nbody, r, pos[i]);
+#pragma vector aligned
+#pragma ivdep
+			for (k = 0; k < Nbody; k++) {
+				r[k] += (pos[i][k] * pos[i][k]);
+			}
 		}
 
 		for (k = 0; k < Nbody; k++) {
@@ -125,6 +135,9 @@ void evolve(int count, double dt) {
 
 }
 
+double inline force(double W, double delta, double r) {
+	return W * delta / (r*r*r);
+}
 
 
 

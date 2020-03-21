@@ -4,7 +4,7 @@
 #PBS -l place=excl
 #PBS -N bench_c
 #PBS -A d171-s1898201
-#PBS -l walltime=0:05:0
+#PBS -l walltime=0:15:0
 
 
 
@@ -12,8 +12,9 @@
 cd $PBS_O_WORKDIR/
 
 # Run the parallel program
-echo 'RAW output'
-echo 'CFLAGS= -g -O3'
-cat changelog.md
+echo 'Flags'
+cat Makefile | grep CFLAGS=
+echo 'changelog'
+echo ' '
 
 ./MD

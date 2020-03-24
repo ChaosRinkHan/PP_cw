@@ -15,6 +15,7 @@ cd $PBS_O_WORKDIR/
 echo 'Flags'
 cat Makefile | grep CFLAGS=
 echo 'changelog'
+cat changelog.md
 echo ' '
 
 ./MD

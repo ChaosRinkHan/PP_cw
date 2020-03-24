@@ -4,9 +4,10 @@
  */
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 #include "coord.h"
 
-void vis_force(int N, double *f, double *vis, double *vel);
+void visc_force(int N, double *f, double *vis, double *vel);
 void add_norm(int N, double *r, double *delta);
 double force(double W, double delta, double r);
 void wind_force(int N, double *f, double *vis, double vel);
@@ -23,18 +24,21 @@ void evolve(int count, double dt) {
     printf("timestep %d\n", step);
     printf("collisions %d\n", collisions);
 
+		memset(r, 0., sizeof(double) * Nbody);
+
     /* set the viscosity term in the force calculation */
     for (j = 0; j < Ndim; j++) {
       visc_force(Nbody, f[j], vis, velo[j]);
     }
+
     /* add the wind term in the force calculation */
     for (j = 0; j < Ndim; j++) {
       wind_force(Nbody, f[j], vis, wind[j]);
     }
     /* calculate distance from central mass */
-    for (k = 0; k < Nbody; k++) {
-      r[k] = 0.0;
-    }
+    //for (k = 0; k < Nbody; k++) { // Moved to front
+    //  r[k] = 0.0;									// memset
+    //}
     for (i = 0; i < Ndim; i++) {
       add_norm(Nbody, r, pos[i]);
     }
@@ -42,9 +46,12 @@ void evolve(int count, double dt) {
       r[k] = sqrt(r[k]);
     }
     /* calculate central force */
-    for (i = 0; i < Nbody; i++) {
-      for (l = 0; l < Ndim; l++) {
-        f[l][i] = f[l][i] - force(G * mass[i] * M_central, pos[l][i], r[i]);
+    for (l = 0; l < Ndim; l++){
+#pragma vector aligned
+#pragma ivdep
+			for (i = 0; i < Nbody; i++) {
+				double temp = f[l][i] - force(G * mass[i] * M_central, pos[l][i], r[i]);
+        f[l][i] = temp;
       }
     }
     /* calculate pairwise separation of particles */
@@ -116,5 +123,32 @@ void evolve(int count, double dt) {
 }
 
 inline double force(double W, double delta, double r) {
-  return W * delta / (pow(r, 3.0));
+  return W * delta / (r*r*r);
+}
+
+inline void visc_force(int N, double *f, double * vis, double *velo) {
+	int i;
+#pragma vector aligned
+#pragma ivdep
+	for (i = 0; i < N; i++) {
+		f[i] = -vis[i] * velo[i];
+	}
+}
+
+void add_norm(int N, double *r, double *delta) {
+	int k;
+#pragma vector aligned
+#pragma ivdep
+	for (k = 0; k < N; k++) {
+		r[k] += (delta[k] * delta[k]);
+	}
+}
+
+inline void wind_force(int N, double *f, double *vis, double velo) {
+	int i;
+#pragma vector aligned
+#pragma ivdep
+	for (i = 0; i < N; i++) {
+		f[i] -= vis[i] * velo;
+	}
 }

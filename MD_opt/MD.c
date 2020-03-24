@@ -56,19 +56,22 @@ void evolve(int count, double dt) {
     }
     /* calculate pairwise separation of particles */
     k = 0;
-    for (i = 0; i < Nbody; i++) {
-      for (j = i + 1; j < Nbody; j++) {
-        for (l = 0; l < Ndim; l++) {
-          delta_pos[l][k] = pos[l][i] - pos[l][j];
+		for (l = 0; l < Ndim; l++) {
+			k = 0;
+			for (i = 0; i < Nbody; i++) {
+#pragma ivdep
+				for (j = i + 1; j < Nbody; j++){
+				delta_pos[l][k] = pos[l][i] - pos[l][j];
+				k = k + 1;
         }
-        k = k + 1;
       }
     }
 
     /* calculate norm of separation vector */
-    for (k = 0; k < Npair; k++) {
+    for (k = 0; k < Npair; k++) { // translated to memset
       delta_r[k] = 0.0;
     }
+
     for (i = 0; i < Ndim; i++) {
       add_norm(Npair, delta_r, delta_pos[i]);
     }
@@ -107,18 +110,18 @@ void evolve(int count, double dt) {
     }
 
     /* update positions */
-    for (i = 0; i < Nbody; i++) {
-      for (j = 0; j < Ndim; j++) {
-        pos[j][i] = pos[j][i] + dt * velo[j][i];
+    for (l = 0; l < Ndim; l++){
+			for (i = 0; i < Nbody; i++) {
+        pos[l][i] = pos[l][i] + dt * velo[l][i];
       }
     }
 
     /* update velocities */
-    for (i = 0; i < Nbody; i++) {
-      for (j = 0; j < Ndim; j++) {
-        velo[j][i] = velo[j][i] + dt * (f[j][i] / mass[i]);
-      }
-    }
+		for (l = 0; l < Ndim; l++){
+			for (i = 0; i < Nbody; i++) {
+				velo[l][i] = velo[l][i] + dt * (f[l][i] / mass[i]);
+			}
+		}
   }
 }
 

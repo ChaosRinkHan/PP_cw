@@ -83,24 +83,26 @@ void evolve(int count, double dt) {
      * add pairwise forces.
      */
     k = 0;
+    int sign = 0;
     for (i = 0; i < Nbody; i++) {
       for (j = i + 1; j < Nbody; j++) {
         Size = radius[i] + radius[j];
         collided = 0;
         for (l = 0; l < Ndim; l++) {
           /*  flip force if close in */
-          if (delta_r[k] >= Size) {
-            f[l][i] = f[l][i] -
+          //if (delta_r[k] >= Size) {
+					sign = (delta_r[k] >= Size)? 1 : 0;
+            f[l][i] = f[l][i] - sign *
                       force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
-            f[l][j] = f[l][j] +
+            f[l][j] = f[l][j] + sign *
                       force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
-          } else {
-            f[l][i] = f[l][i] +
-                      force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
-            f[l][j] = f[l][j] -
-                      force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
-            collided = 1;
-          }
+          //} else {
+          //  f[l][i] = f[l][i] +
+          //            force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
+          //  f[l][j] = f[l][j] -
+          //            force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
+            collided = sign ? collided: 1;
+          //}
         }
         if (collided == 1) {
           collisions++;

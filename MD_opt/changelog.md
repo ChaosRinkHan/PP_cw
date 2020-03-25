@@ -5,7 +5,6 @@
 
 - MD r[k] = 0.0 replace loop by memeset
 - MD force function (r*r*r)
-c
 - utili functions inlined
 - MD line 52 output dep fixed
 - MD line 59 loop interchanged: l, i, j -> solved! <- back to here

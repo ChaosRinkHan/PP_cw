@@ -10,4 +10,4 @@
 - MD line 59 loop interchanged: l, i, j -> solved! <- back to here
 - MD line 113 loop interchanged: l, i <- tested
 - MD line 120 loop interchanged: l, i <- tested
-- MD line 95 if-else reduced <- TBC
+- MD line 95 if-else reduced <- test not passed

@@ -8,6 +8,7 @@
 c
 - utili functions inlined
 - MD line 52 output dep fixed
-- MD line 59 loop interchanged: l, i, j -> solved!
-- MD line 113 loop interchanged: l, i
-- MD line 120 loop interchanged: l, i
+- MD line 59 loop interchanged: l, i, j -> solved! <- back to here
+- MD line 113 loop interchanged: l, i <- TBC
+- MD line 120 loop interchanged: l, i <- TBC
+- MD line 95 if-else reduced <- TBC

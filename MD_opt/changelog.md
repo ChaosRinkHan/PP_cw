@@ -11,4 +11,4 @@
 - MD line 113 loop interchanged: l, i <- tested
 - MD line 120 loop interchanged: l, i <- tested
 - MD line 95 if-else reduced <- test not passed
-- MD line 95 if-else use temp <- TBT
+- MD line 95 if-else use temp <- tested

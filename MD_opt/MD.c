@@ -106,6 +106,7 @@ void evolve(int count, double dt) {
 
 		/* update positions */
 		for (j = 0; j < Ndim; j++) {
+#pragma ivdep
 			for (i = 0; i < Nbody; i++) {
 				pos[j][i] = pos[j][i] + dt * velo[j][i];
 			}
@@ -113,6 +114,7 @@ void evolve(int count, double dt) {
 
 		/* update velocities */
 		for (j = 0; j < Ndim; j++) {
+#pragma ivdep
 			for (i = 0; i < Nbody; i++) {
 				velo[j][i] = velo[j][i] + dt * (f[j][i] / mass[i]);
 			}

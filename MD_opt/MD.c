@@ -24,7 +24,7 @@ void evolve(int count, double dt) {
 		printf("timestep %d\n", step);
 		printf("collisions %d\n", collisions);
 
-		memset(r, 0., sizeof(double) * Nbody);
+		memset(r, 0., sizeof(double) * Nbody+16);
 
 		/* set the viscosity term in the force calculation */
 		for (j = 0; j < Ndim; j++) {
@@ -64,11 +64,12 @@ void evolve(int count, double dt) {
 				k = k + 1;
 			}
 		}
-
 		/* calculate norm of separation vector */
-		for (k = 0; k < Npair; k++) {
-			delta_r[k] = 0.0;
-		}
+		//for (k = 0; k < Npair; k++) {
+		//	delta_r[k] = 0.0;
+		//}
+		memset(delta_r, 0., sizeof(double) * Npair + 16);
+
 		for (i = 0; i < Ndim; i++) {
 			add_norm(Npair, delta_r, delta_pos[i]);
 		}

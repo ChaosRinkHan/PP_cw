@@ -3,7 +3,8 @@
 - control line 35 add stride
 
 
-- MD r[k] = 0.0 replace loop by memeset
+- MD r[k] = 0.0 replace loop by memeset; offset 16 <- tested
+- MD delta_r[k] = 0.0 replace loop by memeset; offset 16 <- tested
 - MD force function (r*r*r)
 - utili functions inlined
 - MD line 52 output dep fixed <- tested till here
@@ -12,3 +13,4 @@
 - MD line 120 loop interchanged: l, i <- tested
 - ABANDONED MD line 95 if-else reduced <- tested: worse SEE 1317821
 - MD line 95 if-else use temp <- tested
+- control calloc replace by _mm_malloc <- TBT

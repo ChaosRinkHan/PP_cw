@@ -10,10 +10,11 @@ changelog
 - MD force function (r*r*r)
 - utili functions inlined
 - MD line 52 output dep fixed <- tested till here
-- MD line 59 loop interchanged: l, i, j -> solved! <- back to here
+- MD line 59 loop interchanged: l, i, j <- test not passed
 - MD line 113 loop interchanged: l, i <- tested
 - MD line 120 loop interchanged: l, i <- tested
-- MD line 95 if-else reduced <- test not passed 
+- MD line 95 if-else reduced <- test not passed
+- MD line 95 if-else use temp <- TBT 
 /*
  *  Simple molecular dynamics code.
  *
@@ -96,22 +97,20 @@ void evolve(int count, double dt) {
 		 * add pairwise forces.
 		 */
 		k = 0;
+		double tempForce;
 		for (i = 0; i < Nbody; i++) {
 			for (j = i + 1; j < Nbody; j++) {
 				Size = radius[i] + radius[j];
 				collided = 0;
 				for (l = 0; l < Ndim; l++) {
 					/*  flip force if close in */
+					tempForce = force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
 					if (delta_r[k] >= Size) {
-						f[l][i] = f[l][i] -
-								force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
-						f[l][j] = f[l][j] +
-								force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
+						f[l][i] = f[l][i] - tempForce;
+						f[l][j] = f[l][j] + tempForce;
 					} else {
-						f[l][i] = f[l][i] +
-								force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
-						f[l][j] = f[l][j] -
-								force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
+						f[l][i] = f[l][i] + tempForce;
+						f[l][j] = f[l][j] - tempForce;
 						collided = 1;
 					}
 				}
@@ -123,15 +122,15 @@ void evolve(int count, double dt) {
 		}
 
 		/* update positions */
-		for (j = 0; j < Ndim; j++){
+		for (j = 0; j < Ndim; j++) {
 			for (i = 0; i < Nbody; i++) {
 				pos[j][i] = pos[j][i] + dt * velo[j][i];
 			}
 		}
 
 		/* update velocities */
-		for (j = 0; j < Ndim; j++){
-			 for (i = 0; i < Nbody; i++) {
+		for (j = 0; j < Ndim; j++) {
+			for (i = 0; i < Nbody; i++) {
 				velo[j][i] = velo[j][i] + dt * (f[j][i] / mass[i]);
 			}
 		}
@@ -368,7 +367,7 @@ timestep 99
 collisions 0
 timestep 100
 collisions 0
-100 timesteps took 21.523143 seconds
+100 timesteps took 18.315045 seconds
 collisions 0
 timestep 1
 collisions 0
@@ -570,7 +569,7 @@ timestep 99
 collisions 8655
 timestep 100
 collisions 8658
-100 timesteps took 21.401613 seconds
+100 timesteps took 18.198845 seconds
 collisions 8661
 timestep 1
 collisions 8661
@@ -772,7 +771,7 @@ timestep 99
 collisions 41602
 timestep 100
 collisions 42201
-100 timesteps took 21.402433 seconds
+100 timesteps took 18.199337 seconds
 collisions 42843
 timestep 1
 collisions 42843
@@ -974,7 +973,7 @@ timestep 99
 collisions 54721
 timestep 100
 collisions 54796
-100 timesteps took 21.403526 seconds
+100 timesteps took 18.195916 seconds
 collisions 54871
 timestep 1
 collisions 54871
@@ -1176,6 +1175,6 @@ timestep 99
 collisions 68002
 timestep 100
 collisions 68404
-100 timesteps took 21.401255 seconds
+100 timesteps took 18.201499 seconds
 collisions 68827
-500 timesteps took 107.218038 seconds
+500 timesteps took 91.197479 seconds

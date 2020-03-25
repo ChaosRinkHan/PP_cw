@@ -20,6 +20,7 @@ void evolve(int count, double dt) {
 	/*
 	 * Loop over timesteps.
 	 */
+#pragma vector aligned
 	for (step = 1; step <= count; step++) {
 		printf("timestep %d\n", step);
 		printf("collisions %d\n", collisions);
@@ -63,7 +64,7 @@ void evolve(int count, double dt) {
 				}
 				k = k + 1;
 			}
-		}
+		} // TODO: improve
 		/* calculate norm of separation vector */
 		//for (k = 0; k < Npair; k++) {
 		//	delta_r[k] = 0.0;
@@ -81,7 +82,7 @@ void evolve(int count, double dt) {
 		 * add pairwise forces.
 		 */
 		k = 0;
-		double tempForce;
+		double tempForce; // TODO: improve
 		for (i = 0; i < Nbody; i++) {
 			for (j = i + 1; j < Nbody; j++) {
 				Size = radius[i] + radius[j];
@@ -123,11 +124,11 @@ void evolve(int count, double dt) {
 	}
 }
 
-inline double force(double W, double delta, double r) {
+double force(double W, double delta, double r) {
 	return W * delta / (r * r * r);
 }
 
-inline void visc_force(int N, double *f, double *vis, double *velo) {
+void visc_force(int N, double *f, double *vis, double *velo) {
 	int i;
 #pragma vector aligned
 #pragma ivdep
@@ -145,7 +146,7 @@ void add_norm(int N, double *r, double *delta) {
 	}
 }
 
-inline void wind_force(int N, double *f, double *vis, double velo) {
+void wind_force(int N, double *f, double *vis, double velo) {
 	int i;
 #pragma vector aligned
 #pragma ivdep

@@ -1,10 +1,10 @@
 #!/bin/bash --login
 #
-#PBS -l select=1:ncpus=36
+#PBS -l select=1:ncpus=1
 #PBS -l place=excl
 #PBS -N bench_c
 #PBS -A d171-s1898201
-#PBS -l walltime=0:15:0
+#PBS -l walltime=0:03:0
 
 
 

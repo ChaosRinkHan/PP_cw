@@ -17,5 +17,7 @@ cat Makefile | grep CFLAGS=
 echo 'changelog'
 cat changelog.md
 echo ' '
+cat MD.c
+echo ' '
 
 ./MD

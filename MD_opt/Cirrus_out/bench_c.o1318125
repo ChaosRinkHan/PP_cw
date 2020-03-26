@@ -1,0 +1,697 @@
+Flags
+CFLAGS= -g -Ofast -qopt-report5
+changelog
+# Change log
+- control line 54 CSE
+- control line 35 add stride
+
+
+- MD r[k] = 0.0 replace loop by memeset; offset 16 <- tested
+- MD delta_r[k] = 0.0 replace loop by memeset; offset 16 <- tested
+- MD force function (r*r*r)
+- utili functions BOTH inline and not inline <- tested, no difference
+- MD line 52 output dep fixed <- tested till here
+- MD line 59 loop interchanged: l, i, j <- tested
+- MD line 113 loop interchanged: l, i <- tested
+- MD line 120 loop interchanged: l, i <- tested
+- ABANDONED MD line 95 if-else reduced <- tested: worse SEE 1317821
+- MD line 95 if-else move out <- tested: faster SEE 1318047
+- MD line 95 if-else use temp <- tested
+- ABANDONED  control calloc replace by _mm_malloc <- cannot run
+- MD line 86 loop interchanged: l, i, j <- tested: slower. reason: more if-else produced RE-TESTING 
+/*
+ *  Simple molecular dynamics code.
+ *
+ */
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include "coord.h"
+
+void visc_force(int N, double *f, double *vis, double *vel);
+void add_norm(int N, double *r, double *delta);
+double force(double W, double delta, double r);
+void wind_force(int N, double *f, double *vis, double vel);
+
+void evolve(int count, double dt) {
+	int step;
+	int i, j, k, l;
+	int collided;
+	double Size;
+	/*
+	 * Loop over timesteps.
+	 */
+#pragma vector aligned
+	for (step = 1; step <= count; step++) {
+		printf("timestep %d\n", step);
+		//printf("collisions %d\n", collisions);
+
+		memset(r, 0., sizeof(double) * Nbody + 16);
+
+		/* set the viscosity term in the force calculation */
+		for (j = 0; j < Ndim; j++) {
+			visc_force(Nbody, f[j], vis, velo[j]);
+		}
+
+		/* add the wind term in the force calculation */
+		for (j = 0; j < Ndim; j++) {
+			wind_force(Nbody, f[j], vis, wind[j]);
+		}
+		/* calculate distance from central mass */
+		//for (k = 0; k < Nbody; k++) { // Moved to front
+		//  r[k] = 0.0;									// memset
+		//}
+		for (i = 0; i < Ndim; i++) {
+			add_norm(Nbody, r, pos[i]);
+		}
+		for (k = 0; k < Nbody; k++) {
+			r[k] = sqrt(r[k]);
+		}
+		/* calculate central force */
+		for (l = 0; l < Ndim; l++) {
+#pragma vector aligned
+#pragma ivdep
+			for (i = 0; i < Nbody; i++) {
+				double temp = f[l][i] - force(G * mass[i] * M_central, pos[l][i], r[i]);
+				f[l][i] = temp;
+			}
+		}
+		/* calculate pairwise separation of particles */
+		//k = 0;
+		for (l = 0; l < Ndim; l++) {
+			k = 0;
+			for (i = 0; i < Nbody; i++) {
+#pragma ivdep
+				for (j = i + 1; j < Nbody; j++) {
+					delta_pos[l][k] = pos[l][i] - pos[l][j];
+					k = k + 1;
+				}
+
+			}
+		} // TODO: improve
+		/* calculate norm of separation vector */
+		//for (k = 0; k < Npair; k++) {
+		//	delta_r[k] = 0.0;
+		//}
+		memset(delta_r, 0., sizeof(double) * Npair + 16);
+
+		for (i = 0; i < Ndim; i++) {
+			add_norm(Npair, delta_r, delta_pos[i]);
+		}
+		for (k = 0; k < Npair; k++) {
+			delta_r[k] = sqrt(delta_r[k]);
+		}
+
+		/*
+		 * add pairwise forces.
+		 */
+		k = 0;
+		double tempForce; // TODO: improve
+		for (l = 0; l < Ndim; l++) {
+			k = 0;
+			for (i = 0; i < Nbody; i++) {
+				for (j = i + 1; j < Nbody; j++) {
+					Size = radius[i] + radius[j];
+					//collided = 0;
+					if (delta_r[k] >= Size) {
+						//for (l = 0; l < Ndim; l++) {
+						/*  flip force if close in */
+						tempForce = force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
+						f[l][i] = f[l][i] - tempForce;
+						f[l][j] = f[l][j] + tempForce;
+						//}
+					} else {
+						//for (l = 0; l < Ndim; l++) {
+						tempForce = force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
+						f[l][i] = f[l][i] + tempForce;
+						f[l][j] = f[l][j] - tempForce;
+						//collided = 1;
+						//}
+						//if (collided == 1) {
+						//	collisions++;
+						//}
+					}
+					k = k + 1;
+				}
+			}
+		}
+
+	/* update positions */
+	for (j = 0; j < Ndim; j++) {
+#pragma ivdep
+		for (i = 0; i < Nbody; i++) {
+			pos[j][i] = pos[j][i] + dt * velo[j][i];
+		}
+	}
+
+	/* update velocities */
+	for (j = 0; j < Ndim; j++) {
+#pragma ivdep
+		for (i = 0; i < Nbody; i++) {
+			velo[j][i] = velo[j][i] + dt * (f[j][i] / mass[i]);
+		}
+	}
+}
+}
+
+double force(double W, double delta, double r) {
+	return W * delta / (r * r * r);
+}
+
+void visc_force(int N, double *f, double *vis, double *velo) {
+	int i;
+#pragma vector aligned
+#pragma ivdep
+	for (i = 0; i < N; i++) {
+		f[i] = -vis[i] * velo[i];
+	}
+}
+
+void add_norm(int N, double *r, double *delta) {
+	int k;
+#pragma vector aligned
+#pragma ivdep
+	for (k = 0; k < N; k++) {
+		r[k] += (delta[k] * delta[k]);
+	}
+}
+
+void wind_force(int N, double *f, double *vis, double velo) {
+	int i;
+#pragma vector aligned
+#pragma ivdep
+	for (i = 0; i < N; i++) {
+		f[i] -= vis[i] * velo;
+	}
+} 
+timestep 1
+timestep 2
+timestep 3
+timestep 4
+timestep 5
+timestep 6
+timestep 7
+timestep 8
+timestep 9
+timestep 10
+timestep 11
+timestep 12
+timestep 13
+timestep 14
+timestep 15
+timestep 16
+timestep 17
+timestep 18
+timestep 19
+timestep 20
+timestep 21
+timestep 22
+timestep 23
+timestep 24
+timestep 25
+timestep 26
+timestep 27
+timestep 28
+timestep 29
+timestep 30
+timestep 31
+timestep 32
+timestep 33
+timestep 34
+timestep 35
+timestep 36
+timestep 37
+timestep 38
+timestep 39
+timestep 40
+timestep 41
+timestep 42
+timestep 43
+timestep 44
+timestep 45
+timestep 46
+timestep 47
+timestep 48
+timestep 49
+timestep 50
+timestep 51
+timestep 52
+timestep 53
+timestep 54
+timestep 55
+timestep 56
+timestep 57
+timestep 58
+timestep 59
+timestep 60
+timestep 61
+timestep 62
+timestep 63
+timestep 64
+timestep 65
+timestep 66
+timestep 67
+timestep 68
+timestep 69
+timestep 70
+timestep 71
+timestep 72
+timestep 73
+timestep 74
+timestep 75
+timestep 76
+timestep 77
+timestep 78
+timestep 79
+timestep 80
+timestep 81
+timestep 82
+timestep 83
+timestep 84
+timestep 85
+timestep 86
+timestep 87
+timestep 88
+timestep 89
+timestep 90
+timestep 91
+timestep 92
+timestep 93
+timestep 94
+timestep 95
+timestep 96
+timestep 97
+timestep 98
+timestep 99
+timestep 100
+100 timesteps took 18.574510 seconds
+collisions 0
+timestep 1
+timestep 2
+timestep 3
+timestep 4
+timestep 5
+timestep 6
+timestep 7
+timestep 8
+timestep 9
+timestep 10
+timestep 11
+timestep 12
+timestep 13
+timestep 14
+timestep 15
+timestep 16
+timestep 17
+timestep 18
+timestep 19
+timestep 20
+timestep 21
+timestep 22
+timestep 23
+timestep 24
+timestep 25
+timestep 26
+timestep 27
+timestep 28
+timestep 29
+timestep 30
+timestep 31
+timestep 32
+timestep 33
+timestep 34
+timestep 35
+timestep 36
+timestep 37
+timestep 38
+timestep 39
+timestep 40
+timestep 41
+timestep 42
+timestep 43
+timestep 44
+timestep 45
+timestep 46
+timestep 47
+timestep 48
+timestep 49
+timestep 50
+timestep 51
+timestep 52
+timestep 53
+timestep 54
+timestep 55
+timestep 56
+timestep 57
+timestep 58
+timestep 59
+timestep 60
+timestep 61
+timestep 62
+timestep 63
+timestep 64
+timestep 65
+timestep 66
+timestep 67
+timestep 68
+timestep 69
+timestep 70
+timestep 71
+timestep 72
+timestep 73
+timestep 74
+timestep 75
+timestep 76
+timestep 77
+timestep 78
+timestep 79
+timestep 80
+timestep 81
+timestep 82
+timestep 83
+timestep 84
+timestep 85
+timestep 86
+timestep 87
+timestep 88
+timestep 89
+timestep 90
+timestep 91
+timestep 92
+timestep 93
+timestep 94
+timestep 95
+timestep 96
+timestep 97
+timestep 98
+timestep 99
+timestep 100
+100 timesteps took 18.454524 seconds
+collisions 0
+timestep 1
+timestep 2
+timestep 3
+timestep 4
+timestep 5
+timestep 6
+timestep 7
+timestep 8
+timestep 9
+timestep 10
+timestep 11
+timestep 12
+timestep 13
+timestep 14
+timestep 15
+timestep 16
+timestep 17
+timestep 18
+timestep 19
+timestep 20
+timestep 21
+timestep 22
+timestep 23
+timestep 24
+timestep 25
+timestep 26
+timestep 27
+timestep 28
+timestep 29
+timestep 30
+timestep 31
+timestep 32
+timestep 33
+timestep 34
+timestep 35
+timestep 36
+timestep 37
+timestep 38
+timestep 39
+timestep 40
+timestep 41
+timestep 42
+timestep 43
+timestep 44
+timestep 45
+timestep 46
+timestep 47
+timestep 48
+timestep 49
+timestep 50
+timestep 51
+timestep 52
+timestep 53
+timestep 54
+timestep 55
+timestep 56
+timestep 57
+timestep 58
+timestep 59
+timestep 60
+timestep 61
+timestep 62
+timestep 63
+timestep 64
+timestep 65
+timestep 66
+timestep 67
+timestep 68
+timestep 69
+timestep 70
+timestep 71
+timestep 72
+timestep 73
+timestep 74
+timestep 75
+timestep 76
+timestep 77
+timestep 78
+timestep 79
+timestep 80
+timestep 81
+timestep 82
+timestep 83
+timestep 84
+timestep 85
+timestep 86
+timestep 87
+timestep 88
+timestep 89
+timestep 90
+timestep 91
+timestep 92
+timestep 93
+timestep 94
+timestep 95
+timestep 96
+timestep 97
+timestep 98
+timestep 99
+timestep 100
+100 timesteps took 18.451882 seconds
+collisions 0
+timestep 1
+timestep 2
+timestep 3
+timestep 4
+timestep 5
+timestep 6
+timestep 7
+timestep 8
+timestep 9
+timestep 10
+timestep 11
+timestep 12
+timestep 13
+timestep 14
+timestep 15
+timestep 16
+timestep 17
+timestep 18
+timestep 19
+timestep 20
+timestep 21
+timestep 22
+timestep 23
+timestep 24
+timestep 25
+timestep 26
+timestep 27
+timestep 28
+timestep 29
+timestep 30
+timestep 31
+timestep 32
+timestep 33
+timestep 34
+timestep 35
+timestep 36
+timestep 37
+timestep 38
+timestep 39
+timestep 40
+timestep 41
+timestep 42
+timestep 43
+timestep 44
+timestep 45
+timestep 46
+timestep 47
+timestep 48
+timestep 49
+timestep 50
+timestep 51
+timestep 52
+timestep 53
+timestep 54
+timestep 55
+timestep 56
+timestep 57
+timestep 58
+timestep 59
+timestep 60
+timestep 61
+timestep 62
+timestep 63
+timestep 64
+timestep 65
+timestep 66
+timestep 67
+timestep 68
+timestep 69
+timestep 70
+timestep 71
+timestep 72
+timestep 73
+timestep 74
+timestep 75
+timestep 76
+timestep 77
+timestep 78
+timestep 79
+timestep 80
+timestep 81
+timestep 82
+timestep 83
+timestep 84
+timestep 85
+timestep 86
+timestep 87
+timestep 88
+timestep 89
+timestep 90
+timestep 91
+timestep 92
+timestep 93
+timestep 94
+timestep 95
+timestep 96
+timestep 97
+timestep 98
+timestep 99
+timestep 100
+100 timesteps took 18.439221 seconds
+collisions 0
+timestep 1
+timestep 2
+timestep 3
+timestep 4
+timestep 5
+timestep 6
+timestep 7
+timestep 8
+timestep 9
+timestep 10
+timestep 11
+timestep 12
+timestep 13
+timestep 14
+timestep 15
+timestep 16
+timestep 17
+timestep 18
+timestep 19
+timestep 20
+timestep 21
+timestep 22
+timestep 23
+timestep 24
+timestep 25
+timestep 26
+timestep 27
+timestep 28
+timestep 29
+timestep 30
+timestep 31
+timestep 32
+timestep 33
+timestep 34
+timestep 35
+timestep 36
+timestep 37
+timestep 38
+timestep 39
+timestep 40
+timestep 41
+timestep 42
+timestep 43
+timestep 44
+timestep 45
+timestep 46
+timestep 47
+timestep 48
+timestep 49
+timestep 50
+timestep 51
+timestep 52
+timestep 53
+timestep 54
+timestep 55
+timestep 56
+timestep 57
+timestep 58
+timestep 59
+timestep 60
+timestep 61
+timestep 62
+timestep 63
+timestep 64
+timestep 65
+timestep 66
+timestep 67
+timestep 68
+timestep 69
+timestep 70
+timestep 71
+timestep 72
+timestep 73
+timestep 74
+timestep 75
+timestep 76
+timestep 77
+timestep 78
+timestep 79
+timestep 80
+timestep 81
+timestep 82
+timestep 83
+timestep 84
+timestep 85
+timestep 86
+timestep 87
+timestep 88
+timestep 89
+timestep 90
+timestep 91
+timestep 92
+timestep 93
+timestep 94
+timestep 95
+timestep 96
+timestep 97
+timestep 98
+timestep 99
+timestep 100
+100 timesteps took 18.446795 seconds
+collisions 0
+500 timesteps took 92.680770 seconds

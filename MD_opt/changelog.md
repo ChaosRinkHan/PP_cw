@@ -8,7 +8,7 @@
 - MD force function (r*r*r)
 - utili functions BOTH inline not inline <- tested, no difference
 - MD line 52 output dep fixed <- tested till here
-- MD line 59 loop interchanged: l, i, j <- test not passed
+- MD line 59 loop interchanged: l, i, j <- tested
 - MD line 113 loop interchanged: l, i <- tested
 - MD line 120 loop interchanged: l, i <- tested
 - ABANDONED MD line 95 if-else reduced <- tested: worse SEE 1317821

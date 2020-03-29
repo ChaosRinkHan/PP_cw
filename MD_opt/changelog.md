@@ -16,3 +16,5 @@
 - MD line 95 if-else use temp <- tested
 - ABANDONED  control calloc replace by _mm_malloc <- cannot run
 - MD line 86 loop interchanged: l, i, j <- tested: slower. reason: more if-else produced
+
+- Ready for profiling <- only shit

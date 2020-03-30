@@ -25,6 +25,7 @@
 - Ready for profiling <- only shit
 
 - New flag tried: -fp <- tested, included in -Ofast
-                  -fast <- error: lm not found
-                  add -ipo <- great improvement: 1320491
+                  -fast <- error: lm not found. try to add its content by adding below
+                  add -ipo <- tested great improvement: 1320491
+                  add -no-prec-div -no-prec-sqrt <- tested, minor improvement ~.8s 1320495
 

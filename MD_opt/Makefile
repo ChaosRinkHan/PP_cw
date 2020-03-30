@@ -1,13 +1,14 @@
 SRC=MD.c control.c util.c 
 OBJ=$(SRC:.c=.o)
 CC=icc 
-CFLAGS= -g -O3 -qopt-report5 -profile-functions
+CFLAGS= -g -Ofast -ipo -qopt-report5
 
 
 all: MD
 
 MD: $(OBJ)
 	$(CC) $(CFLAGS)  -o $@  $(OBJ) -lm
+
 
 output.dat: MD input.dat
 	./MD
@@ -22,7 +23,6 @@ diff:
 clean:
 	rm -f MD $(OBJ)
 	rm -f *.optrpt
-	rm -f loop_prof*
 
 $(OBJ) : coord.h Makefile
 

@@ -43,6 +43,7 @@ void evolve(int count, double dt) {
 		for (i = 0; i < Ndim; i++) {
 			add_norm(Nbody, r, pos[i]);
 		}
+
 		for (k = 0; k < Nbody; k++) {
 			r[k] = sqrt(r[k]);
 		}
@@ -132,7 +133,7 @@ void evolve(int count, double dt) {
 }
 
 double force(double W, double delta, double r) {
-	return W * delta / pow(r, 3.0);
+	return W * delta / (r*r*r);
 }
 
 void visc_force(const int N, double *f, double *vis, double *velo) {

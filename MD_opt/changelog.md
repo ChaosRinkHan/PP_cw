@@ -24,3 +24,7 @@
 
 - Ready for profiling <- only shit
 
+- New flag tried: -fp <- tested, included in -Ofast
+                  -fast <- error: lm not found
+                  add -ipo <- great improvement: 1320491
+

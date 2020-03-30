@@ -22,6 +22,7 @@ diff:
 clean:
 	rm -f MD $(OBJ)
 	rm -f *.optrpt
+	rm -f loop_prof*
 
 $(OBJ) : coord.h Makefile
 

@@ -20,6 +20,7 @@
 - MD line 86 loop interchanged: l, i, j <- tested: slower. reason: more if-else produced
 - MD line 146 add_norm use restrict <- cannot compile
 - MD function use const int <- tested, no difference see 1319966
+- MD line 43 unroll add_norm <- tested, slower see 1319998
 
 - Ready for profiling <- only shit
 

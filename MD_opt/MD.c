@@ -117,24 +117,25 @@ void evolve(int count, double dt) {
 #pragma ivdep
 		for (i = 0; i < Nbody; i++) {
 			pos[j][i] = pos[j][i] + dt * velo[j][i];
+			velo[j][i] = velo[j][i] + dt * (f[j][i] / mass[i]);
 		}
 	}
 
 	/* update velocities */
-	for (j = 0; j < Ndim; j++) {
-#pragma ivdep
-		for (i = 0; i < Nbody; i++) {
-			velo[j][i] = velo[j][i] + dt * (f[j][i] / mass[i]);
-		}
-	}
+//	for (j = 0; j < Ndim; j++) {
+//#pragma ivdep
+//		for (i = 0; i < Nbody; i++) {
+//			velo[j][i] = velo[j][i] + dt * (f[j][i] / mass[i]);
+//		}
+//	}
 }
 }
 
 double force(double W, double delta, double r) {
-	return W * delta / (r * r * r);
+	return W * delta / pow(r, 3.0);
 }
 
-void visc_force(int N, double *f, double *vis, double *velo) {
+void visc_force(const int N, double *f, double *vis, double *velo) {
 	int i;
 #pragma vector aligned
 #pragma ivdep
@@ -143,7 +144,7 @@ void visc_force(int N, double *f, double *vis, double *velo) {
 	}
 }
 
-void add_norm(int N, double *r, double *delta) {
+void add_norm(const int N, double * r, double * delta) {
 	int k;
 #pragma vector aligned
 #pragma ivdep
@@ -152,7 +153,7 @@ void add_norm(int N, double *r, double *delta) {
 	}
 }
 
-void wind_force(int N, double *f, double *vis, double velo) {
+void wind_force(const int N, double *f, double *vis, double velo) {
 	int i;
 #pragma vector aligned
 #pragma ivdep

@@ -32,15 +32,15 @@ int main(int argc, char *argv[]) {
 	wind[Ycoord] = 0.4;
 	wind[Zcoord] = 0.0;
 	/* set up multi dimensional arrays */
-	r = calloc(Nbody+8, sizeof(double));
-	delta_r = calloc(Nbody * Nbody+8, sizeof(double));
-	mass = calloc(Nbody+8, sizeof(double));
-	radius = calloc(Nbody+8, sizeof(double));
-	vis = calloc(Nbody+8, sizeof(double));
-	f[0] = calloc(Ndim * Nbody+8, sizeof(double));
-	pos[0] = calloc(Ndim * Nbody+8, sizeof(double));
-	velo[0] = calloc(Ndim * Nbody+8, sizeof(double));
-	delta_pos[0] = calloc(Ndim * Nbody * Nbody+8, sizeof(double));
+	r = calloc(Nbody+32, sizeof(double));
+	delta_r = calloc(Nbody * Nbody+32, sizeof(double));
+	mass = calloc(Nbody+32, sizeof(double));
+	radius = calloc(Nbody+32, sizeof(double));
+	vis = calloc(Nbody+32, sizeof(double));
+	f[0] = calloc(Ndim * Nbody+32, sizeof(double));
+	pos[0] = calloc(Ndim * Nbody+32, sizeof(double));
+	velo[0] = calloc(Ndim * Nbody+32, sizeof(double));
+	delta_pos[0] = calloc(Ndim * Nbody * Nbody+32, sizeof(double));
 
 	for (i = 1; i < Ndim; i++) {
 		int temp = i * Nbody;

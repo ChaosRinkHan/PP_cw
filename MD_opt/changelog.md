@@ -1,6 +1,6 @@
 # Change log
 - control line 54 CSE
-- control line 35 add stride
+- control line 35 add stride offest 16 <- 
 
 
 - MD r[k] = 0.0 replace loop by memeset; offset 16 <- tested

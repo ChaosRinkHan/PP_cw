@@ -30,4 +30,5 @@
                   add -no-prec-div -no-prec-sqrt <- tested, minor improvement ~.8s 1320495
                   add -static <- tested. it is the reason for -fast that library missing
                   add -xHost <- tested, slower. REMOVED see 1320499
+- try gcc <- tested. O3: 1320567, Ofast: 1320567 slower than existing icc flag
 

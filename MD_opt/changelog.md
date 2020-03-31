@@ -28,4 +28,6 @@
                   -fast <- error: lm not found. try to add its content by adding below
                   add -ipo <- tested great improvement: 1320491
                   add -no-prec-div -no-prec-sqrt <- tested, minor improvement ~.8s 1320495
+                  add -static <- tested. it is the reason for -fast that library missing
+                  add -xHost <- tested, slower. REMOVED see 1320499
 

@@ -6,10 +6,10 @@
 #PBS -A d171-s1898201
 #PBS -l walltime=0:03:0
 
-
-
 # Switch to current working directory
 cd $PBS_O_WORKDIR/
+
+export OMP_NUM_THREADS=1
 
 # Run the parallel program
 echo 'Flags'

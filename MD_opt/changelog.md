@@ -1,4 +1,5 @@
 # Change log
+
 - control line 54 CSE
 - control line 35 add stride offest 16 <- 1319841
                              offdet 32 <- 1319845
@@ -30,6 +31,8 @@
                   add -no-prec-div -no-prec-sqrt <- tested, minor improvement ~.8s 1320495
                   add -static <- tested. it is the reason for -fast that library missing
                   add -xHost <- tested, slower. REMOVED see 1320499
+                  add -xBROADWELL <- tested, slower, REMOVED
+                  
 - try gcc <- tested. O3: 1320567, Ofast: 1320567 slower than existing icc flag
 
 - compiler option -unroll factor <- tested, factor 4 see 1321886

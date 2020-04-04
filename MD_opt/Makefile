@@ -1,7 +1,8 @@
 SRC=MD.c control.c util.c 
 OBJ=$(SRC:.c=.o)
 CC=icc 
-CFLAGS= -g -Ofast -ipo -no-prec-div -no-prec-sqrt -qopt-report5
+CFLAGS= -g -Ofast -ipo -no-prec-div -no-prec-sqrt -qopt-report5\
+-Wall -Winline -pg
 
 
 all: MD
@@ -23,6 +24,7 @@ diff:
 clean:
 	rm -f MD $(OBJ)
 	rm -f *.optrpt
+	rm -f gmon.out
 
 $(OBJ) : coord.h Makefile
 

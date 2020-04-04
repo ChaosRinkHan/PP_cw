@@ -32,3 +32,7 @@
                   add -xHost <- tested, slower. REMOVED see 1320499
 - try gcc <- tested. O3: 1320567, Ofast: 1320567 slower than existing icc flag
 
+- compiler option -unroll factor <- tested, factor 4 see 1321886
+                                 <- tested, factor 2 see 1321890
+                                 <- tested, factor 1 see 1321892
+                                 Not much difference. it might be overrided

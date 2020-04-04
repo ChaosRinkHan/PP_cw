@@ -62,6 +62,7 @@ void evolve(int count, double dt) {
 			k = 0;
 			for (i = 0; i < Nbody; i++) {
 #pragma ivdep
+//#pragma vector aligned
 				for (j = i + 1; j < Nbody; j++) {
 					delta_pos[l][k] = pos[l][i] - pos[l][j];
 					k = k + 1;

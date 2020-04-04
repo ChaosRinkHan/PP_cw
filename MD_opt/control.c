@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 		printf("collisions %d\n", collisions);
 
 /* write final result to a file */
-		sprintf(name, "output.dat%03d", j * Nstep);
+		sprintf(name, "output/output.dat%03d", j * Nstep);
 		out = fopen(name, "w");
 
 		if (!out) {

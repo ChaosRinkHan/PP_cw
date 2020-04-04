@@ -9,17 +9,15 @@ all: MD
 
 MD: $(OBJ)
 	$(CC) $(CFLAGS)  -o $@  $(OBJ) -lm
+	rm -f *.o
 
-
-output.dat: MD input.dat
-	./MD
 
 diff:
-	./Test/diff-output Test/output.dat100 output.dat100
-	./Test/diff-output Test/output.dat200 output.dat200
-	./Test/diff-output Test/output.dat300 output.dat300
-	./Test/diff-output Test/output.dat400 output.dat400
-	./Test/diff-output Test/output.dat500 output.dat500
+	./Test/diff-output Test/output.dat100 output/output.dat100
+	./Test/diff-output Test/output.dat200 output/output.dat200
+	./Test/diff-output Test/output.dat300 output/output.dat300
+	./Test/diff-output Test/output.dat400 output/output.dat400
+	./Test/diff-output Test/output.dat500 output/output.dat500
 
 clean:
 	rm -f MD $(OBJ)

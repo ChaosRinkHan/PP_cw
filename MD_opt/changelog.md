@@ -35,4 +35,5 @@
 - compiler option -unroll factor <- tested, factor 4 see 1321886
                                  <- tested, factor 2 see 1321890
                                  <- tested, factor 1 see 1321892
-                                 Not much difference. it might be overrided
+                                 REMOVED: Not much difference. it might be overrided
+- diff modified, now can detect NaN

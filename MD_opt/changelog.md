@@ -42,3 +42,5 @@
 - diff modified, now can detect NaN
 
 - no dynamical memory alignment <- tested, nearly the same SEE 1323761
+
+- now moved to s

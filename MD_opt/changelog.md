@@ -40,3 +40,5 @@
                                  <- tested, factor 1 see 1321892
                                  REMOVED: Not much difference. it might be overrided
 - diff modified, now can detect NaN
+
+- no dynamical memory alignment <- tested, nearly the same SEE 1323761

@@ -21,3 +21,5 @@ cat MD.c
 echo ' '
 
 ./MD
+
+gprof MD > report/gptof.out

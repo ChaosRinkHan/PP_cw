@@ -4,7 +4,7 @@ See "https://software.intel.com/en-us/intel-advisor-xe" for details.
 
 Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 18.0.5.274 Build 20180823
 
-Compiler options: -g -Ofast -ipo -no-prec-div -no-prec-sqrt -Wall -Winline -pg -qopenmp-simd -o MD -lm -qopt-report-file=report/ipo.optout -qopt-report=5
+Compiler options: -g -Ofast -ipo -no-prec-div -no-prec-sqrt -Wall -Winline -pg -o MD -lm -qopt-report-file=report/ipo.optout -qopt-report=5
 
     Report from: Interprocedural optimizations [ipo]
 
@@ -44,8 +44,8 @@ INLINE REPORT: (main(int, char **)) [1/8=12.5%] control.c(15,34)
     -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
   -> INLINE: (60,13) second() (isz = 9) (sz = 14)
     -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
-  -> (61,5) evolve(int, double) (isz = 498) (sz = 505)
-     [[ Inlining would exceed -inline-max-size value (505>230) <1>]]
+  -> (61,5) evolve(int, double) (isz = 445) (sz = 452)
+     [[ Inlining would exceed -inline-max-size value (452>230) <1>]]
   -> INLINE: (62,12) second() (isz = 9) (sz = 14)
     -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
   -> EXTERN: (63,5) printf(const char *__restrict__, ...)
@@ -172,7 +172,6 @@ LOOP BEGIN at MD.c(23,3)
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
          remark #15346: vector dependence: assumed OUTPUT dependence between f[i] (12:5) and f[i] (12:5)
          remark #15346: vector dependence: assumed OUTPUT dependence between f[i] (12:5) and f[i] (12:5)
-         remark #25438: unrolled without remainder by 2  
       LOOP END
    LOOP END
 
@@ -443,7 +442,7 @@ LOOP BEGIN at MD.c(23,3)
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
       remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (84:13) and f[l][j] (91:13)
       remark #15346: vector dependence: assumed OUTPUT dependence between f[l][j] (91:13) and f[l][i] (84:13)
-      remark #25015: Estimate of max trip count of loop=4096
+      remark #25015: Estimate of max trip count of loop=4160
 
       LOOP BEGIN at MD.c(78,7)
          remark #25096: Loop Interchange not done due to: Imperfect Loop Nest (Either at Source or due to other Compiler Transformations)
@@ -452,7 +451,7 @@ LOOP BEGIN at MD.c(23,3)
          remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (84:13) and f[l][i] (89:13)
          remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (89:13) and f[l][i] (84:13)
          remark #25456: Number of Array Refs Scalar Replaced In Loop: 1
-         remark #25015: Estimate of max trip count of loop=4096
+         remark #25015: Estimate of max trip count of loop=4160
 
          LOOP BEGIN at MD.c(81,9)
             remark #25436: completely unrolled by 3   (pre-vector) 
@@ -518,8 +517,8 @@ MD.c(15,35):remark #34051: REGISTER ALLOCATION : [evolve] MD.c:15
         
     Routine temporaries
         Total         :     377
-            Global    :      96
-            Local     :     281
+            Global    :      93
+            Local     :     284
         Regenerable   :      28
         Spilled       :       7
         

@@ -20,7 +20,7 @@
 #define DEF extern
 #endif
 #define Nbody 4 * 1024
-#define OFFSET 32
+#define OFFSET 64
 #define Npair ((Nbody * (Nbody - 1)) / 2)
 
 enum { Xcoord = 0, Ycoord, Zcoord, Ndim };

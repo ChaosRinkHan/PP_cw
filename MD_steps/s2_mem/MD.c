@@ -4,6 +4,7 @@
  */
 #include <math.h>
 #include <stdio.h>
+
 #include "coord.h"
 
 void visc_force(int N, double *f, double *vis, double *vel);

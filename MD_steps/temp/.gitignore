@@ -1,0 +1,4 @@
+*.o
+MD
+*.optrpt
+Cirrus_out/*

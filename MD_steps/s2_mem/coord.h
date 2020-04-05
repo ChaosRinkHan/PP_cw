@@ -20,24 +20,23 @@
 #define DEF extern
 #endif
 #define Nbody 4 * 1024
-#define OFFSET 8
+#define OFFSET 32
 #define Npair ((Nbody * (Nbody - 1)) / 2)
 
 enum { Xcoord = 0, Ycoord, Zcoord, Ndim };
 
-double mass[Nbody + OFFSET];
-double radius[Nbody + OFFSET];
-double vis[Nbody + OFFSET];
-double f[Ndim][Nbody + OFFSET];
-double pos[Ndim][Nbody + OFFSET];
-double velo[Ndim][Nbody + OFFSET];
+DEF double mass[Nbody + OFFSET];
+DEF double radius[Nbody + OFFSET];
+DEF double vis[Nbody + OFFSET];
+DEF double f[Ndim][Nbody + OFFSET];
+DEF double pos[Ndim][Nbody + OFFSET];
+DEF double velo[Ndim][Nbody + OFFSET];
 // DEF double *delta_pos[3];
-double delta_pos[Ndim][Npair + OFFSET];
-double r[Nbody + OFFSET];        //  double *r;
-double delta_r[Npair + OFFSET];  //  double *delta_r;
-double wind[Ndim];
-int collisions;
-double wind[Ndim];
+DEF double delta_pos[Ndim][Npair + OFFSET];
+DEF double r[Nbody + OFFSET];        //  double *r;
+DEF double delta_r[Npair + OFFSET];  //  double *delta_r;
+DEF int collisions;
+DEF double wind[Ndim];
 
 #define G 2.0
 #define M_central 1000.0

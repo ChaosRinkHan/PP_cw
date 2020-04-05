@@ -11,7 +11,7 @@ cd $PBS_O_WORKDIR/
 
 export OMP_NUM_THREADS=1
 
-# Run the parallel program
+# Run the program
 echo 'Flags'
 cat Makefile | grep CFLAGS=
 echo 'changelog'

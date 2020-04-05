@@ -1,14 +1,15 @@
 SRC=MD.c control.c util.c 
 OBJ=$(SRC:.c=.o)
 CC=icc 
-CFLAGS= -g -Ofast -ipo -no-prec-div -no-prec-sqrt -qopt-report5\
--Wall -Winline -pg
-
+CFLAGS= -g -Ofast -ipo\
+ -no-prec-div -no-prec-sqrt\
+ -Wall -Winline -pg
+REPORT_FLAGS= -qopt-report-file=report/ipo.optout -qopt-report=5
 
 all: MD
 
 MD: $(OBJ)
-	$(CC) $(CFLAGS)  -o $@  $(OBJ) -lm
+	$(CC) $(CFLAGS)  -o $@  $(OBJ) -lm $(REPORT_FLAGS)
 	rm -f *.o
 
 
@@ -21,7 +22,6 @@ diff:
 
 clean:
 	rm -f MD $(OBJ)
-	rm -f *.optrpt
 	rm -f gmon.out
 
 $(OBJ) : coord.h Makefile

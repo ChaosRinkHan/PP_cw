@@ -442,7 +442,7 @@ LOOP BEGIN at MD.c(23,3)
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
       remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (84:13) and f[l][j] (91:13)
       remark #15346: vector dependence: assumed OUTPUT dependence between f[l][j] (91:13) and f[l][i] (84:13)
-      remark #25015: Estimate of max trip count of loop=4160
+      remark #25015: Estimate of max trip count of loop=4100
 
       LOOP BEGIN at MD.c(78,7)
          remark #25096: Loop Interchange not done due to: Imperfect Loop Nest (Either at Source or due to other Compiler Transformations)
@@ -451,7 +451,7 @@ LOOP BEGIN at MD.c(23,3)
          remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (84:13) and f[l][i] (89:13)
          remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (89:13) and f[l][i] (84:13)
          remark #25456: Number of Array Refs Scalar Replaced In Loop: 1
-         remark #25015: Estimate of max trip count of loop=4160
+         remark #25015: Estimate of max trip count of loop=4100
 
          LOOP BEGIN at MD.c(81,9)
             remark #25436: completely unrolled by 3   (pre-vector) 

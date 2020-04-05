@@ -25,16 +25,17 @@
 
 enum { Xcoord = 0, Ycoord, Zcoord, Ndim };
 
-DEF double mass[Nbody + OFFSET];
-DEF double radius[Nbody + OFFSET];
-DEF double vis[Nbody + OFFSET];
-DEF double f[Ndim][Nbody + OFFSET];
-DEF double pos[Ndim][Nbody + OFFSET];
-DEF double velo[Ndim][Nbody + OFFSET];
+DEF double mass[Nbody + OFFSET] __attribute__((aligned(64)));
+DEF double radius[Nbody + OFFSET] __attribute__((aligned(64)));
+DEF double vis[Nbody + OFFSET] __attribute__((aligned(64)));
+DEF double f[Ndim][Nbody + OFFSET] __attribute__((aligned(64)));
+DEF double pos[Ndim][Nbody + OFFSET] __attribute__((aligned(64)));
+DEF double velo[Ndim][Nbody + OFFSET] __attribute__((aligned(64)));
 // DEF double *delta_pos[3];
-DEF double delta_pos[Ndim][Npair + OFFSET];
-DEF double r[Nbody + OFFSET];        //  double *r;
-DEF double delta_r[Npair + OFFSET];  //  double *delta_r;
+DEF double delta_pos[Ndim][Npair + OFFSET] __attribute__((aligned(64)));
+DEF double r[Nbody + OFFSET] __attribute__((aligned(64)));  //  double *r;
+DEF double delta_r[Npair + OFFSET]
+    __attribute__((aligned(64)));  //  double *delta_r;
 DEF int collisions;
 DEF double wind[Ndim];
 

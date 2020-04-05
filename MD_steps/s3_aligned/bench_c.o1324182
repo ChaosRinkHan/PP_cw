@@ -4,10 +4,12 @@ changelog
 # Change log
 
 - Used flags
-- Ststic attary <- TBT
+- Ststic attary
   - control 44 use temp to reduce calculation
   - control 107 i removed
-  - OFFSET 64 <- 1324037 
+  - OFFSET 64 <- 1324037 USED
+  - OFFSET  0 <- 1324039
+  - OFFSET 32 <- 1324134 
 /*
  *  Simple molecular dynamics code.
  *
@@ -326,7 +328,7 @@ timestep 99
 collisions 0
 timestep 100
 collisions 0
-100 timesteps took 15.578405 seconds
+100 timesteps took 14.960510 seconds
 collisions 0
 timestep 1
 collisions 0
@@ -528,7 +530,7 @@ timestep 99
 collisions 8655
 timestep 100
 collisions 8658
-100 timesteps took 15.456657 seconds
+100 timesteps took 14.831336 seconds
 collisions 8661
 timestep 1
 collisions 8661
@@ -730,7 +732,7 @@ timestep 99
 collisions 41602
 timestep 100
 collisions 42201
-100 timesteps took 15.455946 seconds
+100 timesteps took 14.830877 seconds
 collisions 42843
 timestep 1
 collisions 42843
@@ -932,7 +934,7 @@ timestep 99
 collisions 54721
 timestep 100
 collisions 54796
-100 timesteps took 15.455942 seconds
+100 timesteps took 14.833932 seconds
 collisions 54871
 timestep 1
 collisions 54871
@@ -1134,6 +1136,6 @@ timestep 99
 collisions 68002
 timestep 100
 collisions 68404
-100 timesteps took 15.461343 seconds
+100 timesteps took 14.832654 seconds
 collisions 68827
-500 timesteps took 77.491855 seconds
+500 timesteps took 74.373257 seconds

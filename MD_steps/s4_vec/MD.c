@@ -7,10 +7,11 @@
 
 #include "coord.h"
 
-void visc_force(int N, double *f, double *vis, double *vel);
+// void visc_force(int N, double *f, double *vis, double *vel);
 void add_norm(int N, double *r, double *delta);
 double force(double W, double delta, double r);
-void wind_force(int N, double *f, double *vis, double vel);
+// void wind_force(int N, double *f, double *vis, double vel);
+void new_force(int N, double *f, double *vis, double *velo, double wind);
 
 void evolve(int count, double dt) {
   int step;
@@ -25,14 +26,11 @@ void evolve(int count, double dt) {
     printf("collisions %d\n", collisions);
 
     /* set the viscosity term in the force calculation */
-    for (j = 0; j < Ndim; j++) {
-      visc_force(Nbody, f[j], vis, velo[j]);
-    }
     /* add the wind term in the force calculation */
     for (j = 0; j < Ndim; j++) {
-      wind_force(Nbody, f[j], vis, wind[j]);
+      new_force(Nbody, f[j], vis, velo[j], wind[j]);
     }
-    /* calculate distance from central mass */
+    
     for (k = 0; k < Nbody; k++) {
       r[k] = 0.0;
     }

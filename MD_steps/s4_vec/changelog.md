@@ -7,3 +7,6 @@
   - OFFSET 64 <- 1324037 USED
   - OFFSET  0 <- 1324039
   - OFFSET 32 <- 1324134
+
+- loop fusion
+  - visc and wind

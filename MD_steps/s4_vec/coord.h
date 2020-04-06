@@ -41,5 +41,6 @@ DEF double wind[Ndim];
 
 #define G 2.0
 #define M_central 1000.0
+#define GM 2000.0
 
 void evolve(int Nstep, double dt);

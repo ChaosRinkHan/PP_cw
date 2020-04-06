@@ -9,4 +9,6 @@
   - OFFSET 32 <- 1324134
 
 - loop fusion
-  - visc and wind
+  - visc and wind merged <- bench_c.o1324440
+  - new r, unroll, interchanges, merge <- bench_c.o1324469
+  - central force, GM, interchange done by compiler, <- 

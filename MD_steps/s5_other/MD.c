@@ -37,21 +37,21 @@ void evolve(int count, double dt) {
     for (k = 0; k < Nbody; k++) {
       temp =
           pos[0][k] * pos[0][k] + pos[1][k] * pos[1][k] + pos[2][k] * pos[2][k];
-      temp = sqrt(temp);
-      tempGmass = GM * mass[i];
-      f[0][i] -= force(tempGmass, pos[0][i], temp);
-      f[1][i] -= force(tempGmass, pos[1][i], temp);
-      f[2][i] -= force(tempGmass, pos[2][i], temp);
+      r[k] = sqrt(temp);
+      // temp = sqrt(temp);
+      // tempGmass = GM * mass[i];
+      // f[0][i] -= force(tempGmass, pos[0][i], temp);
+      // f[1][i] -= force(tempGmass, pos[1][i], temp);
+      // f[2][i] -= force(tempGmass, pos[2][i], temp);
     }
 
     /* calculate central force */
 
-    // for (l = 0; l < Ndim; l++) {
-    //   for (i = 0; i < Nbody; i++) {
-
-    //     f[l][i] -= force(GM * mass[i], pos[l][i], r[i]);
-    //   }
-    // }
+    for (l = 0; l < Ndim; l++) {
+      for (i = 0; i < Nbody; i++) {
+        f[l][i] -= force(GM * mass[i], pos[l][i], r[i]);
+      }
+    }
 
     /* calculate pairwise separation of particles */
     for (l = 0; l < Ndim; l++) {

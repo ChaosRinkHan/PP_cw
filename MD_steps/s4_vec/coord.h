@@ -32,10 +32,10 @@ DEF double f[Ndim][Nbody + OFFSET] __attribute__((aligned(64)));
 DEF double pos[Ndim][Nbody + OFFSET] __attribute__((aligned(64)));
 DEF double velo[Ndim][Nbody + OFFSET] __attribute__((aligned(64)));
 // DEF double *delta_pos[3];
-DEF double delta_pos[Ndim][Npair + OFFSET] __attribute__((aligned(64)));
+// DEF double delta_pos[Ndim][Npair + OFFSET] __attribute__((aligned(64)));
 DEF double r[Nbody + OFFSET] __attribute__((aligned(64)));  //  double *r;
-DEF double delta_r[Npair + OFFSET]
-    __attribute__((aligned(64)));  //  double *delta_r;
+// DEF double delta_r[Npair + OFFSET]
+//     __attribute__((aligned(64)));
 DEF int collisions;
 DEF double wind[Ndim];
 

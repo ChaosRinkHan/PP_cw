@@ -11,4 +11,5 @@
 - loop fusion
   - visc and wind merged <- bench_c.o1324440
   - new r, unroll, interchanges, merge <- bench_c.o1324469
-  - central force, GM, interchange done by compiler, <- 
+  - central force, GM, interchange done by compiler
+  - norm of separation vector, interchange, merge, unroll <- 1324567 48s

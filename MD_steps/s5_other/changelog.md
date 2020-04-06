@@ -20,3 +20,5 @@
     - f[l][i] moved out of j loop to reduce dependency
 
 Final: 1324667 43s
+
+- r, delta_pos, delta_r made local in evolve

@@ -1,3 +1,28 @@
+Flags
+CFLAGS= -g -Ofast -ipo\
+changelog
+# Change log
+
+- Used flags
+- Ststic attary
+  - control 44 use temp to reduce calculation
+  - control 107 i removed
+  - OFFSET 64 <- 1324037 USED
+  - OFFSET  0 <- 1324039
+  - OFFSET 32 <- 1324134
+
+- loop fusion
+  - visc and wind merged <- bench_c.o1324440
+  - new r, unroll, interchanges, merge <- bench_c.o1324469
+  - central force, GM, interchange done by compiler
+  - norm of separation vector, interchange, merge, unroll <- 1324567 48s
+    - merge with airwise separation of particles <- 1324708 45s
+  - position and velocity update, interchange, merged
+  - add pairwise forces, interchange, conditionals <- 1324579 46s
+    - if removed
+    - f[l][i] moved out of j loop to reduce dependency
+
+Final: 1324667 43s 
 /*
  *  Simple molecular dynamics code.
  *
@@ -8,23 +33,25 @@
 
 #include "coord.h"
 
+// void visc_force(int N, double *f, double *vis, double *vel);
+void add_norm(int N, double *r, double *delta);
 double force(double W, double delta, double r);
+// void wind_force(int N, double *f, double *vis, double vel);
 void new_force(int N, double *f, double *vis, double *velo, double wind);
 
 void evolve(int count, double dt) {
   int step;
   int i, j, k, l;
+  int collided;
   double Size, temp, tempForce, tempGmass, tempFLI[3];
-
-  double r[Nbody + OFFSET] __attribute__((aligned(64)));
-  double delta_r[Npair + OFFSET] __attribute__((aligned(64)));
-  double delta_pos[Ndim][Npair + OFFSET] __attribute__((aligned(64)));
-
+  // double delta_pos[Ndim][Npair + OFFSET] __attribute__((aligned(64)));
+  // double delta_r[Npair + OFFSET] __attribute__((aligned(64)));
   /*
    * Loop over timesteps.
    */
   for (step = 1; step <= count; step++) {
-    printf("timestep %d\ncollisions %d\n", step, collisions);
+    printf("timestep %d\n", step);
+    printf("collisions %d\n", collisions);
 
     memset(r, 0., sizeof(r));
     /* set the viscosity term in the force calculation */
@@ -37,21 +64,16 @@ void evolve(int count, double dt) {
     for (k = 0; k < Nbody; k++) {
       temp =
           pos[0][k] * pos[0][k] + pos[1][k] * pos[1][k] + pos[2][k] * pos[2][k];
-      temp = sqrt(temp);
-      tempGmass = GM * mass[i];
-      f[0][i] -= force(tempGmass, pos[0][i], temp);
-      f[1][i] -= force(tempGmass, pos[1][i], temp);
-      f[2][i] -= force(tempGmass, pos[2][i], temp);
+      r[k] = sqrt(temp);
     }
 
     /* calculate central force */
 
-    // for (l = 0; l < Ndim; l++) {
-    //   for (i = 0; i < Nbody; i++) {
-
-    //     f[l][i] -= force(GM * mass[i], pos[l][i], r[i]);
-    //   }
-    // }
+    for (l = 0; l < Ndim; l++) {
+      for (i = 0; i < Nbody; i++) {
+        f[l][i] -= force(GM * mass[i], pos[l][i], r[i]);
+      }
+    }
 
     /* calculate pairwise separation of particles */
     for (l = 0; l < Ndim; l++) {
@@ -63,7 +85,7 @@ void evolve(int count, double dt) {
           k = k + 1;
         }
       }
-    }
+    } 
 
     /* calculate norm of separation vector */
     for (k = 0; k < Npair; k++) {
@@ -80,6 +102,7 @@ void evolve(int count, double dt) {
     for (i = 0; i < Nbody; i++) {
       memset(tempFLI, 0.0, sizeof(tempFLI));
       for (j = i + 1; j < Nbody; j++) {
+        collided = 0;
         Size = radius[i] + radius[j];
         tempGmass = G * mass[i] * mass[j];
 
@@ -117,3 +140,4 @@ void evolve(int count, double dt) {
     }
   }
 }
+ 

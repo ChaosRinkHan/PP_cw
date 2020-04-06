@@ -11,6 +11,7 @@
 #include "coord.h"
 
 double second(void);
+void evolve(int Nstep, double dt);
 
 int main(int argc, char *argv[]) {
   int i, j;
@@ -31,7 +32,6 @@ int main(int argc, char *argv[]) {
   wind[Xcoord] = 0.9;
   wind[Ycoord] = 0.4;
   wind[Zcoord] = 0.0;
-
 
   /* read the initial data from a file */
 

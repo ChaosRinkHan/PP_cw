@@ -13,5 +13,10 @@
   - new r, unroll, interchanges, merge <- bench_c.o1324469
   - central force, GM, interchange done by compiler
   - norm of separation vector, interchange, merge, unroll <- 1324567 48s
+    - merge with airwise separation of particles <- 1324708 45s
   - position and velocity update, interchange, merged
   - add pairwise forces, interchange, conditionals <- 1324579 46s
+    - if removed
+    - f[l][i] moved out of j loop to reduce dependency
+
+Final: 1324667 43s

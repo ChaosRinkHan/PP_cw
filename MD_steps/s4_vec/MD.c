@@ -19,8 +19,8 @@ void evolve(int count, double dt) {
   int i, j, k, l;
   int collided;
   double Size, temp, tempForce, tempGmass, tempFLI[3];
-  double delta_pos[Ndim][Npair + OFFSET] __attribute__((aligned(64)));
-  double delta_r[Npair + OFFSET] __attribute__((aligned(64)));
+  // double delta_pos[Ndim][Npair + OFFSET] __attribute__((aligned(64)));
+  // double delta_r[Npair + OFFSET] __attribute__((aligned(64)));
   /*
    * Loop over timesteps.
    */

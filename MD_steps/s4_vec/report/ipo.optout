@@ -40,14 +40,14 @@ INLINE REPORT: (main(int, char **)) [1/7=14.3%] control.c(15,34)
   -> EXTERN: (43,5) exit(int)
   -> EXTERN: (47,5) fscanf(FILE *__restrict__, const char *__restrict__, ...)
   -> EXTERN: (52,3) fclose(FILE *)
-  -> (58,12) second() (isz = 9) (sz = 14)
-     [[ Inlining inhibited by overrideable criterion  <1>]]
-  -> (60,13) second() (isz = 9) (sz = 14)
-     [[ Inlining inhibited by overrideable criterion  <1>]]
-  -> (61,5) evolve(int, double) (isz = 329) (sz = 336)
-     [[ Inlining would exceed -inline-max-size value (336>230) <2>]]
-  -> (62,12) second() (isz = 9) (sz = 14)
-     [[ Inlining inhibited by overrideable criterion  <1>]]
+  -> INLINE: (58,12) second() (isz = 9) (sz = 14)
+    -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
+  -> INLINE: (60,13) second() (isz = 9) (sz = 14)
+    -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
+  -> (61,5) evolve(int, double) (isz = 352) (sz = 359)
+     [[ Inlining would exceed -inline-max-size value (359>230) <1>]]
+  -> INLINE: (62,12) second() (isz = 9) (sz = 14)
+    -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
   -> EXTERN: (63,5) printf(const char *__restrict__, ...)
   -> EXTERN: (64,5) printf(const char *__restrict__, ...)
   -> EXTERN: (67,5) sprintf(char *__restrict__, const char *__restrict__, ...)
@@ -56,8 +56,8 @@ INLINE REPORT: (main(int, char **)) [1/7=14.3%] control.c(15,34)
   -> EXTERN: (72,7) exit(int)
   -> EXTERN: (76,7) fprintf(FILE *__restrict__, const char *__restrict__, ...)
   -> EXTERN: (81,5) fclose(FILE *)
-  -> (83,11) second() (isz = 9) (sz = 14)
-     [[ Inlining inhibited by overrideable criterion  <1>]]
+  -> INLINE: (83,11) second() (isz = 9) (sz = 14)
+    -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
   -> EXTERN: (84,3) printf(const char *__restrict__, ...)
 
 
@@ -87,15 +87,15 @@ control.c(15,34):remark #34051: REGISTER ALLOCATION : [main] control.c:15
         Assigned     :   22[ rax rdx rcx rbx rsi rdi r8-r15 zmm0-zmm7]
         
     Routine temporaries
-        Total         :     117
-            Global    :      38
-            Local     :      79
-        Regenerable   :      40
+        Total         :     142
+            Global    :      37
+            Local     :     105
+        Regenerable   :      57
         Spilled       :       7
         
     Routine stack
-        Variables     :      84 bytes*
-            Reads     :       2 [2.00e+00 ~ 0.0%]
+        Variables     :     180 bytes*
+            Reads     :      10 [1.62e+01 ~ 0.0%]
             Writes    :       2 [2.00e+00 ~ 0.0%]
         Spills        :      24 bytes*
             Reads     :       3 [3.70e+00 ~ 0.0%]
@@ -109,57 +109,15 @@ control.c(15,34):remark #34051: REGISTER ALLOCATION : [main] control.c:15
 
 ===========================================================================
 
-Begin optimization report for: second()
-
-    Report from: Interprocedural optimizations [ipo]
-
-INLINE REPORT: (second()) [2/7=28.6%] control.c(87,17)
-  -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
-
-
-    Report from: Code generation optimizations [cg]
-
-control.c(87,17):remark #34051: REGISTER ALLOCATION : [second] control.c:87
-
-    Hardware registers
-        Reserved     :    2[ rsp rip]
-        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
-        Callee-save  :    6[ rbx rbp r12-r15]
-        Assigned     :    5[ rdx rsi rdi zmm0-zmm1]
-        
-    Routine temporaries
-        Total         :      17
-            Global    :       6
-            Local     :      11
-        Regenerable   :       6
-        Spilled       :       0
-        
-    Routine stack
-        Variables     :      24 bytes*
-            Reads     :       2 [2.00e+00 ~ 8.7%]
-            Writes    :       0 [0.00e+00 ~ 0.0%]
-        Spills        :       0 bytes*
-            Reads     :       0 [0.00e+00 ~ 0.0%]
-            Writes    :       0 [0.00e+00 ~ 0.0%]
-    
-    Notes
-    
-        *Non-overlapping variables and spills may share stack space,
-         so the total stack size might be less than this.
-    
-
-===========================================================================
-
 Begin optimization report for: evolve(int, double)
 
     Report from: Interprocedural optimizations [ipo]
 
-INLINE REPORT: (evolve(int, double)) [3/7=42.9%] MD.c(17,35)
+INLINE REPORT: (evolve(int, double)) [2/7=28.6%] MD.c(17,35)
   -> EXTERN: (28,5) printf(const char *__restrict__, ...)
   -> EXTERN: (29,5) printf(const char *__restrict__, ...)
   -> EXTERN: (31,5) memset(void *, int, size_t)
-  -> (35,7) new_force(int, double *, double *, double *, double) (isz = 23) (sz = 36)
-     [[ Inlining inhibited by overrideable criterion  <1>]]
+  -> INLINE: (35,7) new_force(int, double *, double *, double *, double) (isz = 23) (sz = 36)
   -> INLINE: (49,20) force(double, double, double) (isz = 3) (sz = 14)
     -> EXTERN: util.c:(23,23) pow(double, double)
   -> EXTERN: (78,7) memset(void *, int, size_t)
@@ -176,8 +134,28 @@ LOOP BEGIN at MD.c(27,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
    LOOP BEGIN at MD.c(34,5)
-      remark #15382: vectorization support: call to function new_force(int, double *, double *, double *, double) cannot be vectorized   [ MD.c(35,7) ]
-      remark #15344: loop was not vectorized: vector dependence prevents vectorization
+      remark #25096: Loop Interchange not done due to: Imperfect Loop Nest (Either at Source or due to other Compiler Transformations)
+      remark #25452: Original Order found to be proper, but by a close margin
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at util.c(30,3) inlined into MD.c(35,7)
+         remark #15388: vectorization support: reference &f[j][i] has aligned access   [ util.c(31,5) ]
+         remark #15388: vectorization support: reference vis[i] has aligned access   [ MD.c(35,30) ]
+         remark #15388: vectorization support: reference &velo[j][i] has aligned access   [ util.c(31,22) ]
+         remark #15388: vectorization support: reference vis[i] has aligned access   [ MD.c(35,30) ]
+         remark #15305: vectorization support: vector length 2
+         remark #15399: vectorization support: unroll factor set to 4
+         remark #15309: vectorization support: normalized vectorization overhead 0.042
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15448: unmasked aligned unit stride loads: 3 
+         remark #15449: unmasked aligned unit stride stores: 1 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 13 
+         remark #15477: vector cost: 6.000 
+         remark #15478: estimated potential speedup: 2.160 
+         remark #15488: --- end vector cost summary ---
+         remark #25015: Estimate of max trip count of loop=512
+      LOOP END
    LOOP END
 
    LOOP BEGIN at MD.c(39,5)
@@ -361,81 +339,19 @@ MD.c(17,35):remark #34051: REGISTER ALLOCATION : [evolve] MD.c:17
         Assigned     :   28[ rax rdx rcx rbx rsi rdi r8-r15 zmm0-zmm13]
         
     Routine temporaries
-        Total         :     217
-            Global    :      67
-            Local     :     150
-        Regenerable   :      23
-        Spilled       :      10
+        Total         :     240
+            Global    :      68
+            Local     :     172
+        Regenerable   :      21
+        Spilled       :       9
         
     Routine stack
-        Variables     :   268371992 bytes*
-            Reads     :       6 [3.09e+06 ~ 2.9%]
-            Writes    :       6 [1.03e+06 ~ 1.0%]
-        Spills        :      40 bytes*
-            Reads     :       5 [6.55e+00 ~ 0.0%]
-            Writes    :       5 [9.26e+00 ~ 0.0%]
-    
-    Notes
-    
-        *Non-overlapping variables and spills may share stack space,
-         so the total stack size might be less than this.
-    
-
-===========================================================================
-
-Begin optimization report for: new_force(int, double *, double *, double *, double)
-
-    Report from: Interprocedural optimizations [ipo]
-
-INLINE REPORT: (new_force(int, double *, double *, double *, double)) [4/7=57.1%] util.c(26,74)
-
-
-    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
-
-
-LOOP BEGIN at util.c(30,3)
-   remark #15388: vectorization support: reference f[i] has aligned access   [ util.c(31,5) ]
-   remark #15388: vectorization support: reference vis[i] has aligned access   [ util.c(31,13) ]
-   remark #15388: vectorization support: reference velo[i] has aligned access   [ util.c(31,22) ]
-   remark #15388: vectorization support: reference vis[i] has aligned access   [ util.c(31,32) ]
-   remark #15305: vectorization support: vector length 2
-   remark #15399: vectorization support: unroll factor set to 4
-   remark #15309: vectorization support: normalized vectorization overhead 0.042
-   remark #15300: LOOP WAS VECTORIZED
-   remark #15448: unmasked aligned unit stride loads: 3 
-   remark #15449: unmasked aligned unit stride stores: 1 
-   remark #15475: --- begin vector cost summary ---
-   remark #15476: scalar cost: 14 
-   remark #15477: vector cost: 6.000 
-   remark #15478: estimated potential speedup: 2.330 
-   remark #15488: --- end vector cost summary ---
-   remark #25015: Estimate of max trip count of loop=512
-LOOP END
-
-    Report from: Code generation optimizations [cg]
-
-util.c(26,74):remark #34051: REGISTER ALLOCATION : [new_force] util.c:26
-
-    Hardware registers
-        Reserved     :    2[ rsp rip]
-        Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
-        Callee-save  :    6[ rbx rbp r12-r15]
-        Assigned     :   17[ rax rdx rcx rsi rdi r13-r15 zmm0-zmm8]
-        
-    Routine temporaries
-        Total         :      44
-            Global    :      12
-            Local     :      32
-        Regenerable   :       2
-        Spilled       :       4
-        
-    Routine stack
-        Variables     :       0 bytes*
-            Reads     :       0 [0.00e+00 ~ 0.0%]
-            Writes    :       0 [0.00e+00 ~ 0.0%]
-        Spills        :       8 bytes*
-            Reads     :       1 [9.00e-01 ~ 0.5%]
-            Writes    :       1 [9.00e-01 ~ 0.5%]
+        Variables     :      24 bytes*
+            Reads     :       3 [1.93e+03 ~ 0.0%]
+            Writes    :       5 [3.02e+03 ~ 0.0%]
+        Spills        :      32 bytes*
+            Reads     :       4 [3.46e+00 ~ 0.0%]
+            Writes    :       4 [6.17e+00 ~ 0.0%]
     
     Notes
     
@@ -450,6 +366,22 @@ Begin optimization report for: force(double, double, double)
     Report from: Interprocedural optimizations [ipo]
 
 DEAD STATIC FUNCTION: (force(double, double, double)) util.c(22,48)
+
+===========================================================================
+
+Begin optimization report for: new_force(int, double *, double *, double *, double)
+
+    Report from: Interprocedural optimizations [ipo]
+
+DEAD STATIC FUNCTION: (new_force(int, double *, double *, double *, double)) util.c(26,74)
+
+===========================================================================
+
+Begin optimization report for: second()
+
+    Report from: Interprocedural optimizations [ipo]
+
+DEAD STATIC FUNCTION: (second()) control.c(87,17)
 
 ===========================================================================
 
@@ -468,20 +400,16 @@ DEAD STATIC FUNCTION: (add_norm(int, double *, double *)) util.c(15,48)
 Profile feedback used a statically estimated profile for the following routines:
 
   File: MD.c
-        evolve(int, double)                                 [Line    17]
+        evolve(int, double)[Line    17]
 
   File: control.c
-        main(int, char **)                                  [Line    15]
-        second()                                            [Line    87]
-
-  File: util.c
-        new_force(int, double *, double *, double *, double)[Line    26]
+        main(int, char **) [Line    15]
 
 
-  0 out of 4 routine(s) used training profile data for PGO feedback
-  0 out of 4 routine(s) were unable to use training profile data for PGO feedback
-  0 out of 4 routine(s) were unable to find training profile data for PGO feedback
-  4 out of 4 routine(s) used a static estimate profile for PGO feedback
+  0 out of 2 routine(s) used training profile data for PGO feedback
+  0 out of 2 routine(s) were unable to use training profile data for PGO feedback
+  0 out of 2 routine(s) were unable to find training profile data for PGO feedback
+  2 out of 2 routine(s) used a static estimate profile for PGO feedback
 
 
 
@@ -490,11 +418,7 @@ Profile feedback used a statically estimated profile for the following routines:
 
 INLINING FOOTNOTES:
 
-<1> The compiler's heuristics predict that it is not profitable to inline the
-    call.  Add "inline __attribute__((always_inline))" to the declaration of
-    the called function or add "#pragma forceinline" before the call site.
-
-<2> The function is larger than the inliner would normally inline.  Use the
+<1> The function is larger than the inliner would normally inline.  Use the
     option -inline-max-size to increase the size of any function that would
     normally be inlined, add "inline __attribute__((always_inline))" to the
     declaration of the called function, or add "#pragma forceinline" before

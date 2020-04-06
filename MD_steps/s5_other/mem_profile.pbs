@@ -1,0 +1,24 @@
+#!/bin/bash --login
+#
+#PBS -l select=1:ncpus=36
+#PBS -l place=excl
+#PBS -N mem_prof
+#PBS -A d171-s1898201
+#PBS -l walltime=0:30:0
+
+# Switch to current working directory
+cd $PBS_O_WORKDIR/
+
+module load valgrind
+
+# Run the profiling
+echo 'Flags'
+cat Makefile | grep CFLAGS=
+echo 'changelog'
+cat changelog.md
+echo ' '
+cat MD.c
+echo ' '
+
+valgrind --tool=cachegrind --cachegrind-out-file=report/cachegrind.out ./MD 4
+cg_annotate --auto=yes report/cachegrind.out > report/grind_anno.out

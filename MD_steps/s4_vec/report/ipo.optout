@@ -44,8 +44,8 @@ INLINE REPORT: (main(int, char **)) [1/7=14.3%] control.c(15,34)
      [[ Inlining inhibited by overrideable criterion  <1>]]
   -> (60,13) second() (isz = 9) (sz = 14)
      [[ Inlining inhibited by overrideable criterion  <1>]]
-  -> (61,5) evolve(int, double) (isz = 347) (sz = 354)
-     [[ Inlining would exceed -inline-max-size value (354>230) <2>]]
+  -> (61,5) evolve(int, double) (isz = 307) (sz = 314)
+     [[ Inlining would exceed -inline-max-size value (314>230) <2>]]
   -> (62,12) second() (isz = 9) (sz = 14)
      [[ Inlining inhibited by overrideable criterion  <1>]]
   -> EXTERN: (63,5) printf(const char *__restrict__, ...)
@@ -162,13 +162,9 @@ INLINE REPORT: (evolve(int, double)) [3/7=42.9%] MD.c(16,35)
      [[ Inlining inhibited by overrideable criterion  <1>]]
   -> INLINE: (48,20) force(double, double, double) (isz = 3) (sz = 14)
     -> EXTERN: util.c:(23,23) pow(double, double)
-  -> INLINE: (84,23) force(double, double, double) (isz = 3) (sz = 14)
+  -> INLINE: (85,17) force(double, double, double) (isz = 3) (sz = 14)
     -> EXTERN: util.c:(23,23) pow(double, double)
-  -> INLINE: (86,23) force(double, double, double) (isz = 3) (sz = 14)
-    -> EXTERN: util.c:(23,23) pow(double, double)
-  -> INLINE: (89,23) force(double, double, double) (isz = 3) (sz = 14)
-    -> EXTERN: util.c:(23,23) pow(double, double)
-  -> INLINE: (91,23) force(double, double, double) (isz = 3) (sz = 14)
+  -> INLINE: (92,17) force(double, double, double) (isz = 3) (sz = 14)
     -> EXTERN: util.c:(23,23) pow(double, double)
 
 
@@ -300,50 +296,45 @@ LOOP BEGIN at MD.c(26,3)
       remark #25015: Estimate of max trip count of loop=4193280
    LOOP END
 
-   LOOP BEGIN at MD.c(76,5)
+   LOOP BEGIN at MD.c(77,5)
       remark #25096: Loop Interchange not done due to: Imperfect Loop Nest (Either at Source or due to other Compiler Transformations)
-      remark #25451: Advice: Loop Interchange, if possible, might help loopnest. Suggested Permutation : ( 1 2 3 ) --> ( 3 2 1 ) 
+      remark #25451: Advice: Loop Interchange, if possible, might help loopnest. Suggested Permutation : ( 1 2 ) --> ( 2 1 ) 
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (83:13) and f[l][j] (90:13)
-      remark #15346: vector dependence: assumed OUTPUT dependence between f[l][j] (90:13) and f[l][i] (83:13)
+      remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (86:13) and f[l][j] (94:13)
+      remark #15346: vector dependence: assumed OUTPUT dependence between f[l][j] (94:13) and f[l][i] (86:13)
       remark #25015: Estimate of max trip count of loop=4160
 
-      LOOP BEGIN at MD.c(77,7)
-         remark #25096: Loop Interchange not done due to: Imperfect Loop Nest (Either at Source or due to other Compiler Transformations)
-         remark #25451: Advice: Loop Interchange, if possible, might help loopnest. Suggested Permutation : ( 1 2 ) --> ( 2 1 ) 
+      LOOP BEGIN at MD.c(78,7)
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (83:13) and f[l][i] (88:13)
-         remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (88:13) and f[l][i] (83:13)
+         remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (86:13) and f[l][i] (93:13)
+         remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (93:13) and f[l][i] (86:13)
          remark #25456: Number of Array Refs Scalar Replaced In Loop: 1
          remark #25015: Estimate of max trip count of loop=4160
 
-         LOOP BEGIN at MD.c(80,9)
+         LOOP BEGIN at MD.c(82,16)
+            remark #25436: completely unrolled by 3   (pre-vector) 
+         LOOP END
+
+         LOOP BEGIN at MD.c(90,16)
             remark #25436: completely unrolled by 3   (pre-vector) 
          LOOP END
       LOOP END
    LOOP END
 
-   LOOP BEGIN at MD.c(105,7)
-   <Peeled>
-      remark #25444: Loopnest Interchanged: ( 1 2 ) --> ( 2 1 )
-      remark #25045: Fused Loops: ( 105 112 )
+   LOOP BEGIN at MD.c(107,5)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      remark #15542: loop was not vectorized: inner loop was already vectorized   [ MD.c(105,7) ]
-
-      LOOP BEGIN at MD.c(104,5)
-      <Peeled>
-         remark #25045: Fused Loops: ( 104 111 )
-
-         remark #15388: vectorization support: reference pos[j][i] has aligned access   [ MD.c(106,9) ]
-         remark #15388: vectorization support: reference pos[j][i] has aligned access   [ MD.c(106,21) ]
-         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(106,38) ]
-         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(113,9) ]
-         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(113,22) ]
-         remark #15388: vectorization support: reference mass[i] has aligned access   [ MD.c(113,51) ]
-         remark #15388: vectorization support: reference f[j][i] has aligned access   [ MD.c(113,41) ]
+      LOOP BEGIN at MD.c(108,7)
+         remark #15388: vectorization support: reference pos[j][i] has aligned access   [ MD.c(109,9) ]
+         remark #15388: vectorization support: reference pos[j][i] has aligned access   [ MD.c(109,21) ]
+         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(109,38) ]
+         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(110,9) ]
+         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(110,22) ]
+         remark #15388: vectorization support: reference f[j][i] has aligned access   [ MD.c(110,41) ]
+         remark #15388: vectorization support: reference mass[i] has aligned access   [ MD.c(110,51) ]
          remark #15305: vectorization support: vector length 2
          remark #15399: vectorization support: unroll factor set to 4
-         remark #15301: PERMUTED LOOP WAS VECTORIZED
+         remark #15300: LOOP WAS VECTORIZED
          remark #15448: unmasked aligned unit stride loads: 5 
          remark #15449: unmasked aligned unit stride stores: 2 
          remark #15475: --- begin vector cost summary ---
@@ -355,15 +346,6 @@ LOOP BEGIN at MD.c(26,3)
          remark #25456: Number of Array Refs Scalar Replaced In Loop: 4
          remark #25015: Estimate of max trip count of loop=512
       LOOP END
-
-      LOOP BEGIN at MD.c(111,5)
-         remark #25046: Loop lost in Fusion 
-      LOOP END
-   LOOP END
-
-   LOOP BEGIN at MD.c(111,5)
-      remark #25444: Loopnest Interchanged: ( 1 2 ) --> ( 2 1 )
-      remark #25046: Loop lost in Fusion 
    LOOP END
 LOOP END
 
@@ -379,16 +361,16 @@ MD.c(16,35):remark #34051: REGISTER ALLOCATION : [evolve] MD.c:16
         Assigned     :   30[ rax rdx rcx rbx rsi rdi r8-r15 zmm0-zmm15]
         
     Routine temporaries
-        Total         :     264
-            Global    :      71
-            Local     :     193
-        Regenerable   :      23
+        Total         :     273
+            Global    :      64
+            Local     :     209
+        Regenerable   :      22
         Spilled       :      10
         
     Routine stack
         Variables     :   268371968 bytes*
-            Reads     :       3 [3.09e+06 ~ 2.2%]
-            Writes    :       1 [1.03e+06 ~ 0.7%]
+            Reads     :       3 [3.09e+06 ~ 3.7%]
+            Writes    :       1 [1.03e+06 ~ 1.2%]
         Spills        :      40 bytes*
             Reads     :       5 [6.55e+00 ~ 0.0%]
             Writes    :       5 [9.26e+00 ~ 0.0%]

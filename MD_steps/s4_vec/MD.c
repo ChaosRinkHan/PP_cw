@@ -73,27 +73,30 @@ void evolve(int count, double dt) {
      * add pairwise forces.
      */
     k = 0;
+    double tempForce;  // TODO: improve
     for (i = 0; i < Nbody; i++) {
       for (j = i + 1; j < Nbody; j++) {
         Size = radius[i] + radius[j];
         collided = 0;
-        for (l = 0; l < Ndim; l++) {
-          /*  flip force if close in */
-          if (delta_r[k] >= Size) {
-            f[l][i] = f[l][i] -
-                      force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
-            f[l][j] = f[l][j] +
-                      force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
-          } else {
-            f[l][i] = f[l][i] +
-                      force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
-            f[l][j] = f[l][j] -
-                      force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
+        if (delta_r[k] >= Size) {
+          for (l = 0; l < Ndim; l++) {
+            /*  flip force if close in */
+            tempForce =
+                force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
+            f[l][i] = f[l][i] - tempForce;
+            f[l][j] = f[l][j] + tempForce;
+          }
+        } else {
+          for (l = 0; l < Ndim; l++) {
+            tempForce =
+                force(G * mass[i] * mass[j], delta_pos[l][k], delta_r[k]);
+            f[l][i] = f[l][i] + tempForce;
+            f[l][j] = f[l][j] - tempForce;
             collided = 1;
           }
-        }
-        if (collided == 1) {
-          collisions++;
+          if (collided == 1) {
+            collisions++;
+          }
         }
         k = k + 1;
       }
@@ -101,15 +104,9 @@ void evolve(int count, double dt) {
 
     /* update positions */
     /* update velocities */
-    for (i = 0; i < Nbody; i++) {
-      for (j = 0; j < Ndim; j++) {
+    for (j = 0; j < Ndim; j++) {
+      for (i = 0; i < Nbody; i++) {
         pos[j][i] = pos[j][i] + dt * velo[j][i];
-      }
-    }
-
-
-    for (i = 0; i < Nbody; i++) {
-      for (j = 0; j < Ndim; j++) {
         velo[j][i] = velo[j][i] + dt * (f[j][i] / mass[i]);
       }
     }

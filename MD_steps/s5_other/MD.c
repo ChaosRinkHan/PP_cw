@@ -5,7 +5,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-
 #include "coord.h"
 
 double force(double W, double delta, double r);
@@ -39,37 +38,37 @@ void evolve(int count, double dt) {
       f[2][k] -= force(tempGmass, pos[2][k], temp);
     }
 
+    double delta_pos_new[Ndim], temp_norm;
     k = 0;
     for (i = 0; i < Nbody; i++) {
       memset(tempFLI, 0.0, sizeof(tempFLI));
 
       for (j = i + 1; j < Nbody; j++) {
         /* calculate pairwise separation of particles */
-        delta_pos[0][k] = pos[0][i] - pos[0][j];
-        delta_pos[1][k] = pos[1][i] - pos[1][j];
-        delta_pos[2][k] = pos[2][i] - pos[2][j];
+        delta_pos_new[0] = pos[0][i] - pos[0][j];
+        delta_pos_new[1] = pos[1][i] - pos[1][j];
+        delta_pos_new[2] = pos[2][i] - pos[2][j];
 
         /* calculate norm of separation vector */
-        temp = delta_pos[0][k] * delta_pos[0][k] +
-               delta_pos[1][k] * delta_pos[1][k] +
-               delta_pos[2][k] * delta_pos[2][k];
-        delta_r[k] = sqrt(temp);
+        temp_norm = delta_pos_new[0] * delta_pos_new[0] + delta_pos_new[1] * delta_pos_new[1] +
+                    delta_pos_new[2] * delta_pos_new[2];
+        temp_norm = sqrt(temp_norm);
 
         /* add pairwise forces */
         Size = radius[i] + radius[j];
         tempGmass = G * mass[i] * mass[j];
 
         /*  flip force if close in */
-        if (delta_r[k] >= Size) {
+        if (temp_norm >= Size) {
           for (l = 0; l < Ndim; l++) {
-            tempForce = force(tempGmass, delta_pos[l][k], delta_r[k]);
+            tempForce = force(tempGmass, delta_pos_new[l], temp_norm);
             // f[l][i] = f[l][i] - tempForce;
             tempFLI[l] -= tempForce;
             f[l][j] += tempForce;
           }
         } else {
           for (l = 0; l < Ndim; l++) {
-            tempForce = force(tempGmass, delta_pos[l][k], delta_r[k]);
+            tempForce = force(tempGmass, delta_pos_new[l], temp_norm);
             // f[l][i] += tempForce;
             tempFLI[l] += tempForce;
             f[l][j] -= tempForce;

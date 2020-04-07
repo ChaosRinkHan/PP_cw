@@ -23,6 +23,8 @@ Final: 1324667 43s
 
 - r, delta_pos, delta_r made local in evolve
   - r removed
+  - delta_r removed
+  - delta_pos removed <- 1325591 34s
 - Read the logic and make optimisation
   - central force optmisation
     - mannual unroll
@@ -30,3 +32,4 @@ Final: 1324667 43s
     - manually unroll
     - merge <- bench_c.o1325470 39s
     - merge with add <- 1325487 40s
+- pos[i][j] interchange

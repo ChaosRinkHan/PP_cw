@@ -44,8 +44,8 @@ INLINE REPORT: (main(int, char **)) [1/6=16.7%] control.c(16,34)
     -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
   -> INLINE: (60,13) second() (isz = 9) (sz = 14)
     -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
-  -> (61,5) evolve(int, double) (isz = 321) (sz = 328)
-     [[ Inlining would exceed -inline-max-size value (328>230) <1>]]
+  -> (61,5) evolve(int, double) (isz = 320) (sz = 327)
+     [[ Inlining would exceed -inline-max-size value (327>230) <1>]]
   -> INLINE: (62,12) second() (isz = 9) (sz = 14)
     -> EXTERN: (91,3) gettimeofday(struct timeval *__restrict__, __timezone_ptr_t)
   -> EXTERN: (63,5) printf(const char *__restrict__, ...)
@@ -115,17 +115,17 @@ Begin optimization report for: evolve(int, double)
 
 INLINE REPORT: (evolve(int, double)) [2/6=33.3%] MD.c(14,35)
   -> EXTERN: (23,5) printf(const char *__restrict__, ...)
-  -> INLINE: (29,7) new_force(int, double *, double *, double *, double) (isz = 23) (sz = 36)
+  -> INLINE: (28,7) new_force(int, double *, double *, double *, double) (isz = 23) (sz = 36)
+  -> INLINE: (37,18) force(double, double, double) (isz = 3) (sz = 14)
+    -> EXTERN: util.c:(23,23) pow(double, double)
+  -> INLINE: (38,18) force(double, double, double) (isz = 3) (sz = 14)
+    -> EXTERN: util.c:(23,23) pow(double, double)
   -> INLINE: (39,18) force(double, double, double) (isz = 3) (sz = 14)
     -> EXTERN: util.c:(23,23) pow(double, double)
-  -> INLINE: (40,18) force(double, double, double) (isz = 3) (sz = 14)
+  -> EXTERN: (45,7) memset(void *, int, size_t)
+  -> INLINE: (65,25) force(double, double, double) (isz = 3) (sz = 14)
     -> EXTERN: util.c:(23,23) pow(double, double)
-  -> INLINE: (41,18) force(double, double, double) (isz = 3) (sz = 14)
-    -> EXTERN: util.c:(23,23) pow(double, double)
-  -> EXTERN: (46,7) memset(void *, int, size_t)
-  -> INLINE: (68,25) force(double, double, double) (isz = 3) (sz = 14)
-    -> EXTERN: util.c:(23,23) pow(double, double)
-  -> INLINE: (74,25) force(double, double, double) (isz = 3) (sz = 14)
+  -> INLINE: (72,25) force(double, double, double) (isz = 3) (sz = 14)
     -> EXTERN: util.c:(23,23) pow(double, double)
 
 
@@ -135,16 +135,16 @@ INLINE REPORT: (evolve(int, double)) [2/6=33.3%] MD.c(14,35)
 LOOP BEGIN at MD.c(22,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at MD.c(28,5)
+   LOOP BEGIN at MD.c(27,5)
       remark #25096: Loop Interchange not done due to: Imperfect Loop Nest (Either at Source or due to other Compiler Transformations)
       remark #25452: Original Order found to be proper, but by a close margin
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at util.c(30,3) inlined into MD.c(29,7)
+      LOOP BEGIN at util.c(30,3) inlined into MD.c(28,7)
          remark #15388: vectorization support: reference &f[j][i] has aligned access   [ util.c(31,5) ]
-         remark #15388: vectorization support: reference vis[i] has aligned access   [ MD.c(29,30) ]
+         remark #15388: vectorization support: reference vis[i] has aligned access   [ MD.c(28,30) ]
          remark #15388: vectorization support: reference &velo[j][i] has aligned access   [ util.c(31,22) ]
-         remark #15388: vectorization support: reference vis[i] has aligned access   [ MD.c(29,30) ]
+         remark #15388: vectorization support: reference vis[i] has aligned access   [ MD.c(28,30) ]
          remark #15305: vectorization support: vector length 2
          remark #15399: vectorization support: unroll factor set to 4
          remark #15309: vectorization support: normalized vectorization overhead 0.042
@@ -160,23 +160,23 @@ LOOP BEGIN at MD.c(22,3)
       LOOP END
    LOOP END
 
-   LOOP BEGIN at MD.c(33,5)
-      remark #15388: vectorization support: reference pos[0][k] has aligned access   [ MD.c(35,11) ]
-      remark #15388: vectorization support: reference pos[0][k] has aligned access   [ MD.c(35,23) ]
-      remark #15388: vectorization support: reference pos[1][k] has aligned access   [ MD.c(35,35) ]
-      remark #15388: vectorization support: reference pos[1][k] has aligned access   [ MD.c(35,47) ]
-      remark #15388: vectorization support: reference pos[2][k] has aligned access   [ MD.c(35,59) ]
-      remark #15388: vectorization support: reference pos[2][k] has aligned access   [ MD.c(35,71) ]
-      remark #15388: vectorization support: reference mass[k] has aligned access   [ MD.c(38,24) ]
-      remark #15388: vectorization support: reference f[0][k] has aligned access   [ MD.c(39,7) ]
-      remark #15388: vectorization support: reference f[0][k] has aligned access   [ MD.c(39,7) ]
-      remark #15388: vectorization support: reference pos[0][k] has aligned access   [ MD.c(39,35) ]
-      remark #15388: vectorization support: reference f[1][k] has aligned access   [ MD.c(40,7) ]
-      remark #15388: vectorization support: reference f[1][k] has aligned access   [ MD.c(40,7) ]
-      remark #15388: vectorization support: reference pos[1][k] has aligned access   [ MD.c(40,35) ]
-      remark #15388: vectorization support: reference f[2][k] has aligned access   [ MD.c(41,7) ]
-      remark #15388: vectorization support: reference f[2][k] has aligned access   [ MD.c(41,7) ]
-      remark #15388: vectorization support: reference pos[2][k] has aligned access   [ MD.c(41,35) ]
+   LOOP BEGIN at MD.c(32,5)
+      remark #15388: vectorization support: reference pos[0][k] has aligned access   [ MD.c(34,11) ]
+      remark #15388: vectorization support: reference pos[0][k] has aligned access   [ MD.c(34,23) ]
+      remark #15388: vectorization support: reference pos[1][k] has aligned access   [ MD.c(34,35) ]
+      remark #15388: vectorization support: reference pos[1][k] has aligned access   [ MD.c(34,47) ]
+      remark #15388: vectorization support: reference pos[2][k] has aligned access   [ MD.c(34,59) ]
+      remark #15388: vectorization support: reference pos[2][k] has aligned access   [ MD.c(34,71) ]
+      remark #15388: vectorization support: reference mass[k] has aligned access   [ MD.c(36,24) ]
+      remark #15388: vectorization support: reference f[0][k] has aligned access   [ MD.c(37,7) ]
+      remark #15388: vectorization support: reference f[0][k] has aligned access   [ MD.c(37,7) ]
+      remark #15388: vectorization support: reference pos[0][k] has aligned access   [ MD.c(37,35) ]
+      remark #15388: vectorization support: reference f[1][k] has aligned access   [ MD.c(38,7) ]
+      remark #15388: vectorization support: reference f[1][k] has aligned access   [ MD.c(38,7) ]
+      remark #15388: vectorization support: reference pos[1][k] has aligned access   [ MD.c(38,35) ]
+      remark #15388: vectorization support: reference f[2][k] has aligned access   [ MD.c(39,7) ]
+      remark #15388: vectorization support: reference f[2][k] has aligned access   [ MD.c(39,7) ]
+      remark #15388: vectorization support: reference pos[2][k] has aligned access   [ MD.c(39,35) ]
       remark #15305: vectorization support: vector length 2
       remark #15309: vectorization support: normalized vectorization overhead 0.060
       remark #15300: LOOP WAS VECTORIZED
@@ -191,43 +191,42 @@ LOOP BEGIN at MD.c(22,3)
       remark #25015: Estimate of max trip count of loop=2048
    LOOP END
 
-   LOOP BEGIN at MD.c(45,5)
+   LOOP BEGIN at MD.c(44,5)
       remark #25096: Loop Interchange not done due to: Imperfect Loop Nest (Either at Source or due to other Compiler Transformations)
       remark #25451: Advice: Loop Interchange, if possible, might help loopnest. Suggested Permutation : ( 1 2 ) --> ( 2 1 ) 
-      remark #15382: vectorization support: call to function memset(void *, int, size_t) cannot be vectorized   [ MD.c(46,7) ]
+      remark #15382: vectorization support: call to function memset(void *, int, size_t) cannot be vectorized   [ MD.c(45,7) ]
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed OUTPUT dependence between tempFLI (46:7) and f[l][j] (76:13)
-      remark #15346: vector dependence: assumed OUTPUT dependence between f[l][j] (76:13) and tempFLI (46:7)
+      remark #15346: vector dependence: assumed OUTPUT dependence between tempFLI (45:7) and f[2][i] (84:7)
+      remark #15346: vector dependence: assumed OUTPUT dependence between f[2][i] (84:7) and tempFLI (45:7)
       remark #25015: Estimate of max trip count of loop=4160
 
-      LOOP BEGIN at MD.c(48,7)
+      LOOP BEGIN at MD.c(47,7)
          remark #15344: loop was not vectorized: vector dependence prevents vectorization
-         remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (69:13) and f[l][i] (75:13)
-         remark #15346: vector dependence: assumed OUTPUT dependence between f[l][i] (75:13) and f[l][i] (69:13)
-         remark #25456: Number of Array Refs Scalar Replaced In Loop: 1
+         remark #15346: vector dependence: assumed FLOW dependence between delta_pos_new[0] (49:9) and delta_pos_new[l] (72:13)
+         remark #15346: vector dependence: assumed ANTI dependence between delta_pos_new[l] (72:13) and delta_pos_new[0] (49:9)
          remark #25015: Estimate of max trip count of loop=4160
 
-         LOOP BEGIN at MD.c(67,16)
+         LOOP BEGIN at MD.c(64,11)
             remark #25436: completely unrolled by 3   (pre-vector) 
          LOOP END
 
-         LOOP BEGIN at MD.c(73,16)
+         LOOP BEGIN at MD.c(71,11)
             remark #25436: completely unrolled by 3   (pre-vector) 
          LOOP END
       LOOP END
    LOOP END
 
-   LOOP BEGIN at MD.c(121,5)
+   LOOP BEGIN at MD.c(89,5)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at MD.c(122,7)
-         remark #15388: vectorization support: reference pos[j][i] has aligned access   [ MD.c(123,9) ]
-         remark #15388: vectorization support: reference pos[j][i] has aligned access   [ MD.c(123,9) ]
-         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(123,27) ]
-         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(124,9) ]
-         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(124,9) ]
-         remark #15388: vectorization support: reference f[j][i] has aligned access   [ MD.c(124,29) ]
-         remark #15388: vectorization support: reference mass[i] has aligned access   [ MD.c(124,39) ]
+      LOOP BEGIN at MD.c(90,7)
+         remark #15388: vectorization support: reference pos[j][i] has aligned access   [ MD.c(91,9) ]
+         remark #15388: vectorization support: reference pos[j][i] has aligned access   [ MD.c(91,9) ]
+         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(91,27) ]
+         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(92,9) ]
+         remark #15388: vectorization support: reference velo[j][i] has aligned access   [ MD.c(92,9) ]
+         remark #15388: vectorization support: reference f[j][i] has aligned access   [ MD.c(92,29) ]
+         remark #15388: vectorization support: reference mass[i] has aligned access   [ MD.c(92,39) ]
          remark #15305: vectorization support: vector length 2
          remark #15399: vectorization support: unroll factor set to 4
          remark #15300: LOOP WAS VECTORIZED
@@ -247,29 +246,29 @@ LOOP END
 
     Report from: Code generation optimizations [cg]
 
-MD.c(46,7):remark #34000: call to memset implemented inline with stores with proven (alignment, offset): (16, 0)
+MD.c(45,7):remark #34000: call to memset implemented inline with stores with proven (alignment, offset): (16, 0)
 MD.c(14,35):remark #34051: REGISTER ALLOCATION : [evolve] MD.c:14
 
     Hardware registers
         Reserved     :    2[ rsp rip]
         Available    :   39[ rax rdx rcx rbx rbp rsi rdi r8-r15 mm0-mm7 zmm0-zmm15]
         Callee-save  :    6[ rbx rbp r12-r15]
-        Assigned     :   27[ rax rdx rcx rbx rsi rdi r8-r11 r13-r15 zmm0-zmm13]
+        Assigned     :   27[ rax rdx rcx rsi rdi r8-r10 r12-r14 zmm0-zmm15]
         
     Routine temporaries
-        Total         :     177
-            Global    :      45
-            Local     :     132
+        Total         :     165
+            Global    :      46
+            Local     :     119
         Regenerable   :      13
-        Spilled       :       4
+        Spilled       :       3
         
     Routine stack
         Variables     :      24 bytes*
-            Reads     :       0 [0.00e+00 ~ 0.0%]
-            Writes    :       2 [4.09e+04 ~ 0.0%]
-        Spills        :      24 bytes*
-            Reads     :       3 [2.70e+00 ~ 0.0%]
-            Writes    :       3 [2.70e+00 ~ 0.0%]
+            Reads     :       3 [6.13e+04 ~ 0.0%]
+            Writes    :       5 [9.61e+04 ~ 0.0%]
+        Spills        :      16 bytes*
+            Reads     :       2 [1.80e+00 ~ 0.0%]
+            Writes    :       2 [1.80e+00 ~ 0.0%]
     
     Notes
     

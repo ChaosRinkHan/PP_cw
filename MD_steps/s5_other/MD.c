@@ -30,12 +30,12 @@ void evolve(int count, double dt) {
     /* calculate distance from central mass */
     for (k = 0; k < Nbody; k++) {
       temp =
-          pos[0][k] * pos[0][k] + pos[1][k] * pos[1][k] + pos[2][k] * pos[2][k];
+          pos[k][0] * pos[k][0] + pos[k][1] * pos[k][1] + pos[k][2] * pos[k][2];
       temp = sqrt(temp);
       tempGmass = GM * mass[k];
-      f[0][k] -= force(tempGmass, pos[0][k], temp);
-      f[1][k] -= force(tempGmass, pos[1][k], temp);
-      f[2][k] -= force(tempGmass, pos[2][k], temp);
+      f[0][k] -= force(tempGmass, pos[k][0], temp);
+      f[1][k] -= force(tempGmass, pos[k][1], temp);
+      f[2][k] -= force(tempGmass, pos[k][2], temp);
     }
 
     double delta_pos_new[Ndim], temp_norm;
@@ -45,9 +45,9 @@ void evolve(int count, double dt) {
 
       for (j = i + 1; j < Nbody; j++) {
         /* calculate pairwise separation of particles */
-        delta_pos_new[0] = pos[0][i] - pos[0][j];
-        delta_pos_new[1] = pos[1][i] - pos[1][j];
-        delta_pos_new[2] = pos[2][i] - pos[2][j];
+        delta_pos_new[0] = pos[i][0] - pos[j][0];
+        delta_pos_new[1] = pos[i][1] - pos[j][1];
+        delta_pos_new[2] = pos[i][2] - pos[j][2];
 
         /* calculate norm of separation vector */
         temp_norm = delta_pos_new[0] * delta_pos_new[0] + delta_pos_new[1] * delta_pos_new[1] +
@@ -87,7 +87,7 @@ void evolve(int count, double dt) {
     /* update velocities */
     for (j = 0; j < Ndim; j++) {
       for (i = 0; i < Nbody; i++) {
-        pos[j][i] += dt * velo[j][i];
+        pos[i][j] += dt * velo[j][i];
         velo[j][i] += dt * (f[j][i] / mass[i]);
       }
     }

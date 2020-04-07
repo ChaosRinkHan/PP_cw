@@ -30,7 +30,7 @@ DEF double mass[Nbody + OFFSET] __attribute__((aligned(64)));
 DEF double radius[Nbody + OFFSET] __attribute__((aligned(64)));
 DEF double vis[Nbody + OFFSET] __attribute__((aligned(64)));
 DEF double f[Ndim][Nbody + OFFSET] __attribute__((aligned(64)));
-DEF double pos[Ndim][Nbody + OFFSET] __attribute__((aligned(64)));
+DEF double pos[Nbody + OFFSET][Ndim] __attribute__((aligned(64)));
 DEF double velo[Ndim][Nbody + OFFSET] __attribute__((aligned(64)));
 // DEF double delta_pos[Ndim][Npair + OFFSET] __attribute__((aligned(64)));
 // DEF double r[Nbody + OFFSET] __attribute__((aligned(64))); 

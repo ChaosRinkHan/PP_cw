@@ -22,7 +22,6 @@ void evolve(int count, double dt) {
   for (step = 1; step <= count; step++) {
     printf("timestep %d\ncollisions %d\n", step, collisions);
 
-    // memset(r, 0., sizeof(r));
     /* set the viscosity term in the force calculation */
     /* add the wind term in the force calculation */
     for (j = 0; j < Ndim; j++) {
@@ -33,7 +32,6 @@ void evolve(int count, double dt) {
     for (k = 0; k < Nbody; k++) {
       temp =
           pos[0][k] * pos[0][k] + pos[1][k] * pos[1][k] + pos[2][k] * pos[2][k];
-      // r[k] = sqrt(temp);
       temp = sqrt(temp);
       tempGmass = GM * mass[k];
       f[0][k] -= force(tempGmass, pos[0][k], temp);
@@ -41,44 +39,23 @@ void evolve(int count, double dt) {
       f[2][k] -= force(tempGmass, pos[2][k], temp);
     }
 
-    // for (i = 0; i < Nbody; i++) {
-    //   f[0][i] -= force(GM * mass[i], pos[0][i], r[i]);
-    //   f[1][i] -= force(GM * mass[i], pos[1][i], r[i]);
-    //   f[2][i] -= force(GM * mass[i], pos[2][i], r[i]);
-    // }
-    // }
-
-    /* calculate pairwise separation of particles */
-    /* calculate norm of separation vector */
     k = 0;
     for (i = 0; i < Nbody; i++) {
-      // #pragma ivdep
+      memset(tempFLI, 0.0, sizeof(tempFLI));
+
       for (j = i + 1; j < Nbody; j++) {
+        /* calculate pairwise separation of particles */
         delta_pos[0][k] = pos[0][i] - pos[0][j];
         delta_pos[1][k] = pos[1][i] - pos[1][j];
         delta_pos[2][k] = pos[2][i] - pos[2][j];
 
+        /* calculate norm of separation vector */
         temp = delta_pos[0][k] * delta_pos[0][k] +
                delta_pos[1][k] * delta_pos[1][k] +
                delta_pos[2][k] * delta_pos[2][k];
         delta_r[k] = sqrt(temp);
-        k = k + 1;
-      }
-    }
-    // for (k = 0; k < Npair; k++) {
-    //   temp = delta_pos[0][k] * delta_pos[0][k] +
-    //          delta_pos[1][k] * delta_pos[1][k] +
-    //          delta_pos[2][k] * delta_pos[2][k];
-    //   delta_r[k] = sqrt(temp);
-    // }
 
-    /*
-     * add pairwise forces.
-     */
-    k = 0;
-    for (i = 0; i < Nbody; i++) {
-      memset(tempFLI, 0.0, sizeof(tempFLI));
-      for (j = i + 1; j < Nbody; j++) {
+        /* add pairwise forces */
         Size = radius[i] + radius[j];
         tempGmass = G * mass[i] * mass[j];
 
@@ -93,12 +70,13 @@ void evolve(int count, double dt) {
         } else {
           for (l = 0; l < Ndim; l++) {
             tempForce = force(tempGmass, delta_pos[l][k], delta_r[k]);
-            // f[l][i] = f[l][i] + tempForce;
+            // f[l][i] += tempForce;
             tempFLI[l] += tempForce;
             f[l][j] -= tempForce;
           }
           collisions++;
         }
+
         k = k + 1;
       }
       f[0][i] += tempFLI[0];

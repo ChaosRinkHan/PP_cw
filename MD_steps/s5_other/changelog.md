@@ -33,3 +33,8 @@ Final: 1324667 43s
     - merge                     <- bench_c.o1325470 39s
     - merge with add            <- 1325487 40s
 - pos[i][j] interchange         <- 1325637 34.5s
+- f[i][j] interchange           <- 1325663 34.1s
+  - new_force inlined
+  - f can be local              
+  - first twoo loop merged      <- 1325692 34.2s
+- velo[i][j] interchanged       <- 1325717 34.1s

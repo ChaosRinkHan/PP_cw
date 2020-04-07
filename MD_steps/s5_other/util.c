@@ -23,11 +23,11 @@ double force(double W, double delta, double r) {
   return W * delta / (pow(r, 3.0));
 }
 
-void new_force(int N, double *f, double *vis, double *velo, double wind) {
-  int i;
-#pragma ivdep
-#pragma vector aligned
-  for (i = 0; i < N; i++) {
-    f[i] = -vis[i] * velo[i] - vis[i] * wind;
-  }
-}
+// void new_force(int N, double *f, double *vis, double *velo, double wind) {
+//   int i;
+// #pragma ivdep
+// #pragma vector aligned
+//   for (i = 0; i < N; i++) {
+//     f[i] = -vis[i] * velo[i] - vis[i] * wind;
+//   }
+// }

@@ -49,23 +49,28 @@ void evolve(int count, double dt) {
     // }
 
     /* calculate pairwise separation of particles */
-      k = 0;
-      for (i = 0; i < Nbody; i++) {
-        // #pragma ivdep
-        for (j = i + 1; j < Nbody; j++) {
-          delta_pos[0][k] = pos[0][i] - pos[0][j];
-          delta_pos[1][k] = pos[1][i] - pos[1][j];
-          delta_pos[2][k] = pos[2][i] - pos[2][j];
-          k = k + 1;
-        }
-      }
     /* calculate norm of separation vector */
-    for (k = 0; k < Npair; k++) {
-      temp = delta_pos[0][k] * delta_pos[0][k] +
-             delta_pos[1][k] * delta_pos[1][k] +
-             delta_pos[2][k] * delta_pos[2][k];
-      delta_r[k] = sqrt(temp);
+    k = 0;
+    for (i = 0; i < Nbody; i++) {
+      // #pragma ivdep
+      for (j = i + 1; j < Nbody; j++) {
+        delta_pos[0][k] = pos[0][i] - pos[0][j];
+        delta_pos[1][k] = pos[1][i] - pos[1][j];
+        delta_pos[2][k] = pos[2][i] - pos[2][j];
+
+        temp = delta_pos[0][k] * delta_pos[0][k] +
+               delta_pos[1][k] * delta_pos[1][k] +
+               delta_pos[2][k] * delta_pos[2][k];
+        delta_r[k] = sqrt(temp);
+        k = k + 1;
+      }
     }
+    // for (k = 0; k < Npair; k++) {
+    //   temp = delta_pos[0][k] * delta_pos[0][k] +
+    //          delta_pos[1][k] * delta_pos[1][k] +
+    //          delta_pos[2][k] * delta_pos[2][k];
+    //   delta_r[k] = sqrt(temp);
+    // }
 
     /*
      * add pairwise forces.

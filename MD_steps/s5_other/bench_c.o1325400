@@ -1,0 +1,1159 @@
+Flags
+CFLAGS= -g -Ofast -ipo\
+changelog
+# Change log
+
+- Used flags
+- Ststic attary
+  - control 44 use temp to reduce calculation
+  - control 107 i removed
+  - OFFSET 64 <- 1324037 USED
+  - OFFSET  0 <- 1324039
+  - OFFSET 32 <- 1324134
+
+- loop fusion
+  - visc and wind merged <- bench_c.o1324440
+  - new r, unroll, interchanges, merge <- bench_c.o1324469
+  - central force, GM, interchange done by compiler
+  - norm of separation vector, interchange, merge, unroll <- 1324567 48s
+    - merge with airwise separation of particles <- 1324708 45s
+  - position and velocity update, interchange, merged
+  - add pairwise forces, interchange, conditionals <- 1324579 46s
+    - if removed
+    - f[l][i] moved out of j loop to reduce dependency
+
+Final: 1324667 43s
+
+- r, delta_pos, delta_r made local in evolve
+- Read the logic and make optimisation
+  - central force optmisation
+  - mannual unroll 
+/*
+ *  Simple molecular dynamics code.
+ *
+ */
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "coord.h"
+
+double force(double W, double delta, double r);
+void new_force(int N, double *f, double *vis, double *velo, double wind);
+
+void evolve(int count, double dt) {
+  int step;
+  int i, j, k, l;
+  double Size, temp, tempForce, tempGmass, tempFLI[3];
+
+  /*
+   * Loop over timesteps.
+   */
+  for (step = 1; step <= count; step++) {
+    printf("timestep %d\ncollisions %d\n", step, collisions);
+
+    // memset(r, 0., sizeof(r));
+    /* set the viscosity term in the force calculation */
+    /* add the wind term in the force calculation */
+    for (j = 0; j < Ndim; j++) {
+      new_force(Nbody, f[j], vis, velo[j], wind[j]);
+    }
+
+    /* calculate distance from central mass */
+    for (k = 0; k < Nbody; k++) {
+      temp =
+          pos[0][k] * pos[0][k] + pos[1][k] * pos[1][k] + pos[2][k] * pos[2][k];
+      // r[k] = sqrt(temp);
+      temp = sqrt(temp);
+      tempGmass = GM * mass[k];
+      f[0][k] -= force(tempGmass, pos[0][k], temp);
+      f[1][k] -= force(tempGmass, pos[1][k], temp);
+      f[2][k] -= force(tempGmass, pos[2][k], temp);
+    }
+
+    // for (i = 0; i < Nbody; i++) {
+    //   f[0][i] -= force(GM * mass[i], pos[0][i], r[i]);
+    //   f[1][i] -= force(GM * mass[i], pos[1][i], r[i]);
+    //   f[2][i] -= force(GM * mass[i], pos[2][i], r[i]);
+    // }
+    // }
+
+    /* calculate pairwise separation of particles */
+    // for (l = 0; l < Ndim; l++) {
+      k = 0;
+    for (i = 0; i < Nbody; i++) {
+      // #pragma ivdep
+      for (j = i + 1; j < Nbody; j++) {
+        temp = (pos[0][i] - pos[0][j]) * (pos[0][i] - pos[0][j]) +
+               (pos[1][i] - pos[1][j]) * (pos[1][i] - pos[1][j]) +
+               (pos[2][i] - pos[2][j]) * (pos[2][i] - pos[2][j]);
+        delta_r[k] = sqrt(temp);
+        k = k + 1;
+      }
+    }
+    // }
+
+    /* calculate norm of separation vector */
+    // for (k = 0; k < Npair; k++) {
+    //   temp = delta_pos[0][k] * delta_pos[0][k] +
+    //          delta_pos[1][k] * delta_pos[1][k] +
+    //          delta_pos[2][k] * delta_pos[2][k];
+    //   delta_r[k] = sqrt(temp);
+    // }
+
+    /*
+     * add pairwise forces.
+     */
+    k = 0;
+    for (i = 0; i < Nbody; i++) {
+      memset(tempFLI, 0.0, sizeof(tempFLI));
+      for (j = i + 1; j < Nbody; j++) {
+        Size = radius[i] + radius[j];
+        tempGmass = G * mass[i] * mass[j];
+
+        /*  flip force if close in */
+        if (delta_r[k] >= Size) {
+          for (l = 0; l < Ndim; l++) {
+            tempForce = force(tempGmass, delta_pos[l][k], delta_r[k]);
+            // f[l][i] = f[l][i] - tempForce;
+            tempFLI[l] -= tempForce;
+            f[l][j] += tempForce;
+          }
+        } else {
+          for (l = 0; l < Ndim; l++) {
+            tempForce = force(tempGmass, delta_pos[l][k], delta_r[k]);
+            // f[l][i] = f[l][i] + tempForce;
+            tempFLI[l] += tempForce;
+            f[l][j] -= tempForce;
+          }
+          collisions++;
+        }
+        k = k + 1;
+      }
+      f[0][i] += tempFLI[0];
+      f[1][i] += tempFLI[1];
+      f[2][i] += tempFLI[2];
+    }
+
+    /* update positions */
+    /* update velocities */
+    for (j = 0; j < Ndim; j++) {
+      for (i = 0; i < Nbody; i++) {
+        pos[j][i] += dt * velo[j][i];
+        velo[j][i] += dt * (f[j][i] / mass[i]);
+      }
+    }
+  }
+}
+ 
+timestep 1
+collisions 0
+timestep 2
+collisions 0
+timestep 3
+collisions 0
+timestep 4
+collisions 0
+timestep 5
+collisions 0
+timestep 6
+collisions 0
+timestep 7
+collisions 0
+timestep 8
+collisions 0
+timestep 9
+collisions 0
+timestep 10
+collisions 0
+timestep 11
+collisions 0
+timestep 12
+collisions 0
+timestep 13
+collisions 0
+timestep 14
+collisions 0
+timestep 15
+collisions 0
+timestep 16
+collisions 0
+timestep 17
+collisions 0
+timestep 18
+collisions 0
+timestep 19
+collisions 0
+timestep 20
+collisions 0
+timestep 21
+collisions 0
+timestep 22
+collisions 0
+timestep 23
+collisions 0
+timestep 24
+collisions 0
+timestep 25
+collisions 0
+timestep 26
+collisions 0
+timestep 27
+collisions 0
+timestep 28
+collisions 0
+timestep 29
+collisions 0
+timestep 30
+collisions 0
+timestep 31
+collisions 0
+timestep 32
+collisions 0
+timestep 33
+collisions 0
+timestep 34
+collisions 0
+timestep 35
+collisions 0
+timestep 36
+collisions 0
+timestep 37
+collisions 0
+timestep 38
+collisions 0
+timestep 39
+collisions 0
+timestep 40
+collisions 0
+timestep 41
+collisions 0
+timestep 42
+collisions 0
+timestep 43
+collisions 0
+timestep 44
+collisions 0
+timestep 45
+collisions 0
+timestep 46
+collisions 0
+timestep 47
+collisions 0
+timestep 48
+collisions 0
+timestep 49
+collisions 0
+timestep 50
+collisions 0
+timestep 51
+collisions 0
+timestep 52
+collisions 0
+timestep 53
+collisions 0
+timestep 54
+collisions 0
+timestep 55
+collisions 0
+timestep 56
+collisions 0
+timestep 57
+collisions 0
+timestep 58
+collisions 0
+timestep 59
+collisions 0
+timestep 60
+collisions 0
+timestep 61
+collisions 0
+timestep 62
+collisions 0
+timestep 63
+collisions 0
+timestep 64
+collisions 0
+timestep 65
+collisions 0
+timestep 66
+collisions 0
+timestep 67
+collisions 0
+timestep 68
+collisions 0
+timestep 69
+collisions 0
+timestep 70
+collisions 0
+timestep 71
+collisions 0
+timestep 72
+collisions 0
+timestep 73
+collisions 0
+timestep 74
+collisions 0
+timestep 75
+collisions 0
+timestep 76
+collisions 0
+timestep 77
+collisions 0
+timestep 78
+collisions 0
+timestep 79
+collisions 0
+timestep 80
+collisions 0
+timestep 81
+collisions 0
+timestep 82
+collisions 0
+timestep 83
+collisions 0
+timestep 84
+collisions 0
+timestep 85
+collisions 0
+timestep 86
+collisions 0
+timestep 87
+collisions 0
+timestep 88
+collisions 0
+timestep 89
+collisions 0
+timestep 90
+collisions 0
+timestep 91
+collisions 0
+timestep 92
+collisions 0
+timestep 93
+collisions 0
+timestep 94
+collisions 0
+timestep 95
+collisions 0
+timestep 96
+collisions 0
+timestep 97
+collisions 0
+timestep 98
+collisions 0
+timestep 99
+collisions 0
+timestep 100
+collisions 0
+100 timesteps took 6.246117 seconds
+collisions 0
+timestep 1
+collisions 0
+timestep 2
+collisions 0
+timestep 3
+collisions 0
+timestep 4
+collisions 0
+timestep 5
+collisions 0
+timestep 6
+collisions 0
+timestep 7
+collisions 0
+timestep 8
+collisions 0
+timestep 9
+collisions 0
+timestep 10
+collisions 0
+timestep 11
+collisions 0
+timestep 12
+collisions 0
+timestep 13
+collisions 0
+timestep 14
+collisions 0
+timestep 15
+collisions 0
+timestep 16
+collisions 0
+timestep 17
+collisions 0
+timestep 18
+collisions 0
+timestep 19
+collisions 0
+timestep 20
+collisions 0
+timestep 21
+collisions 0
+timestep 22
+collisions 0
+timestep 23
+collisions 0
+timestep 24
+collisions 0
+timestep 25
+collisions 0
+timestep 26
+collisions 0
+timestep 27
+collisions 0
+timestep 28
+collisions 0
+timestep 29
+collisions 0
+timestep 30
+collisions 0
+timestep 31
+collisions 0
+timestep 32
+collisions 0
+timestep 33
+collisions 0
+timestep 34
+collisions 0
+timestep 35
+collisions 0
+timestep 36
+collisions 0
+timestep 37
+collisions 0
+timestep 38
+collisions 0
+timestep 39
+collisions 0
+timestep 40
+collisions 0
+timestep 41
+collisions 0
+timestep 42
+collisions 0
+timestep 43
+collisions 0
+timestep 44
+collisions 0
+timestep 45
+collisions 0
+timestep 46
+collisions 0
+timestep 47
+collisions 0
+timestep 48
+collisions 0
+timestep 49
+collisions 0
+timestep 50
+collisions 0
+timestep 51
+collisions 0
+timestep 52
+collisions 0
+timestep 53
+collisions 0
+timestep 54
+collisions 0
+timestep 55
+collisions 0
+timestep 56
+collisions 0
+timestep 57
+collisions 0
+timestep 58
+collisions 0
+timestep 59
+collisions 0
+timestep 60
+collisions 0
+timestep 61
+collisions 0
+timestep 62
+collisions 0
+timestep 63
+collisions 0
+timestep 64
+collisions 0
+timestep 65
+collisions 0
+timestep 66
+collisions 0
+timestep 67
+collisions 0
+timestep 68
+collisions 0
+timestep 69
+collisions 0
+timestep 70
+collisions 0
+timestep 71
+collisions 0
+timestep 72
+collisions 0
+timestep 73
+collisions 0
+timestep 74
+collisions 0
+timestep 75
+collisions 0
+timestep 76
+collisions 0
+timestep 77
+collisions 0
+timestep 78
+collisions 0
+timestep 79
+collisions 0
+timestep 80
+collisions 0
+timestep 81
+collisions 0
+timestep 82
+collisions 0
+timestep 83
+collisions 0
+timestep 84
+collisions 0
+timestep 85
+collisions 0
+timestep 86
+collisions 0
+timestep 87
+collisions 0
+timestep 88
+collisions 0
+timestep 89
+collisions 0
+timestep 90
+collisions 0
+timestep 91
+collisions 0
+timestep 92
+collisions 0
+timestep 93
+collisions 0
+timestep 94
+collisions 0
+timestep 95
+collisions 0
+timestep 96
+collisions 0
+timestep 97
+collisions 0
+timestep 98
+collisions 0
+timestep 99
+collisions 0
+timestep 100
+collisions 0
+100 timesteps took 6.184054 seconds
+collisions 0
+timestep 1
+collisions 0
+timestep 2
+collisions 0
+timestep 3
+collisions 0
+timestep 4
+collisions 0
+timestep 5
+collisions 0
+timestep 6
+collisions 0
+timestep 7
+collisions 0
+timestep 8
+collisions 0
+timestep 9
+collisions 0
+timestep 10
+collisions 0
+timestep 11
+collisions 0
+timestep 12
+collisions 0
+timestep 13
+collisions 0
+timestep 14
+collisions 0
+timestep 15
+collisions 0
+timestep 16
+collisions 0
+timestep 17
+collisions 0
+timestep 18
+collisions 0
+timestep 19
+collisions 0
+timestep 20
+collisions 0
+timestep 21
+collisions 0
+timestep 22
+collisions 0
+timestep 23
+collisions 0
+timestep 24
+collisions 0
+timestep 25
+collisions 0
+timestep 26
+collisions 0
+timestep 27
+collisions 0
+timestep 28
+collisions 0
+timestep 29
+collisions 0
+timestep 30
+collisions 0
+timestep 31
+collisions 0
+timestep 32
+collisions 0
+timestep 33
+collisions 0
+timestep 34
+collisions 0
+timestep 35
+collisions 0
+timestep 36
+collisions 0
+timestep 37
+collisions 0
+timestep 38
+collisions 0
+timestep 39
+collisions 0
+timestep 40
+collisions 0
+timestep 41
+collisions 0
+timestep 42
+collisions 0
+timestep 43
+collisions 0
+timestep 44
+collisions 0
+timestep 45
+collisions 0
+timestep 46
+collisions 0
+timestep 47
+collisions 0
+timestep 48
+collisions 0
+timestep 49
+collisions 0
+timestep 50
+collisions 0
+timestep 51
+collisions 0
+timestep 52
+collisions 0
+timestep 53
+collisions 0
+timestep 54
+collisions 0
+timestep 55
+collisions 0
+timestep 56
+collisions 0
+timestep 57
+collisions 0
+timestep 58
+collisions 0
+timestep 59
+collisions 0
+timestep 60
+collisions 0
+timestep 61
+collisions 0
+timestep 62
+collisions 0
+timestep 63
+collisions 0
+timestep 64
+collisions 0
+timestep 65
+collisions 0
+timestep 66
+collisions 0
+timestep 67
+collisions 0
+timestep 68
+collisions 0
+timestep 69
+collisions 0
+timestep 70
+collisions 0
+timestep 71
+collisions 0
+timestep 72
+collisions 0
+timestep 73
+collisions 0
+timestep 74
+collisions 0
+timestep 75
+collisions 0
+timestep 76
+collisions 0
+timestep 77
+collisions 0
+timestep 78
+collisions 0
+timestep 79
+collisions 0
+timestep 80
+collisions 0
+timestep 81
+collisions 0
+timestep 82
+collisions 0
+timestep 83
+collisions 0
+timestep 84
+collisions 0
+timestep 85
+collisions 0
+timestep 86
+collisions 0
+timestep 87
+collisions 0
+timestep 88
+collisions 0
+timestep 89
+collisions 0
+timestep 90
+collisions 0
+timestep 91
+collisions 0
+timestep 92
+collisions 0
+timestep 93
+collisions 0
+timestep 94
+collisions 0
+timestep 95
+collisions 0
+timestep 96
+collisions 0
+timestep 97
+collisions 0
+timestep 98
+collisions 0
+timestep 99
+collisions 0
+timestep 100
+collisions 0
+100 timesteps took 6.157050 seconds
+collisions 0
+timestep 1
+collisions 0
+timestep 2
+collisions 0
+timestep 3
+collisions 0
+timestep 4
+collisions 0
+timestep 5
+collisions 0
+timestep 6
+collisions 0
+timestep 7
+collisions 0
+timestep 8
+collisions 0
+timestep 9
+collisions 0
+timestep 10
+collisions 0
+timestep 11
+collisions 0
+timestep 12
+collisions 0
+timestep 13
+collisions 0
+timestep 14
+collisions 0
+timestep 15
+collisions 0
+timestep 16
+collisions 0
+timestep 17
+collisions 0
+timestep 18
+collisions 0
+timestep 19
+collisions 0
+timestep 20
+collisions 0
+timestep 21
+collisions 0
+timestep 22
+collisions 0
+timestep 23
+collisions 0
+timestep 24
+collisions 0
+timestep 25
+collisions 0
+timestep 26
+collisions 0
+timestep 27
+collisions 0
+timestep 28
+collisions 0
+timestep 29
+collisions 0
+timestep 30
+collisions 0
+timestep 31
+collisions 0
+timestep 32
+collisions 0
+timestep 33
+collisions 0
+timestep 34
+collisions 0
+timestep 35
+collisions 0
+timestep 36
+collisions 0
+timestep 37
+collisions 0
+timestep 38
+collisions 0
+timestep 39
+collisions 0
+timestep 40
+collisions 0
+timestep 41
+collisions 0
+timestep 42
+collisions 0
+timestep 43
+collisions 0
+timestep 44
+collisions 0
+timestep 45
+collisions 0
+timestep 46
+collisions 0
+timestep 47
+collisions 0
+timestep 48
+collisions 0
+timestep 49
+collisions 0
+timestep 50
+collisions 0
+timestep 51
+collisions 0
+timestep 52
+collisions 0
+timestep 53
+collisions 0
+timestep 54
+collisions 0
+timestep 55
+collisions 0
+timestep 56
+collisions 0
+timestep 57
+collisions 0
+timestep 58
+collisions 0
+timestep 59
+collisions 0
+timestep 60
+collisions 0
+timestep 61
+collisions 0
+timestep 62
+collisions 0
+timestep 63
+collisions 0
+timestep 64
+collisions 0
+timestep 65
+collisions 0
+timestep 66
+collisions 0
+timestep 67
+collisions 0
+timestep 68
+collisions 0
+timestep 69
+collisions 0
+timestep 70
+collisions 0
+timestep 71
+collisions 0
+timestep 72
+collisions 0
+timestep 73
+collisions 0
+timestep 74
+collisions 0
+timestep 75
+collisions 0
+timestep 76
+collisions 0
+timestep 77
+collisions 0
+timestep 78
+collisions 0
+timestep 79
+collisions 0
+timestep 80
+collisions 0
+timestep 81
+collisions 0
+timestep 82
+collisions 0
+timestep 83
+collisions 0
+timestep 84
+collisions 0
+timestep 85
+collisions 0
+timestep 86
+collisions 0
+timestep 87
+collisions 0
+timestep 88
+collisions 0
+timestep 89
+collisions 0
+timestep 90
+collisions 0
+timestep 91
+collisions 0
+timestep 92
+collisions 0
+timestep 93
+collisions 0
+timestep 94
+collisions 0
+timestep 95
+collisions 0
+timestep 96
+collisions 0
+timestep 97
+collisions 0
+timestep 98
+collisions 0
+timestep 99
+collisions 0
+timestep 100
+collisions 0
+100 timesteps took 6.157197 seconds
+collisions 0
+timestep 1
+collisions 0
+timestep 2
+collisions 0
+timestep 3
+collisions 0
+timestep 4
+collisions 0
+timestep 5
+collisions 0
+timestep 6
+collisions 0
+timestep 7
+collisions 0
+timestep 8
+collisions 0
+timestep 9
+collisions 0
+timestep 10
+collisions 0
+timestep 11
+collisions 0
+timestep 12
+collisions 0
+timestep 13
+collisions 0
+timestep 14
+collisions 0
+timestep 15
+collisions 0
+timestep 16
+collisions 0
+timestep 17
+collisions 0
+timestep 18
+collisions 0
+timestep 19
+collisions 0
+timestep 20
+collisions 0
+timestep 21
+collisions 0
+timestep 22
+collisions 0
+timestep 23
+collisions 0
+timestep 24
+collisions 0
+timestep 25
+collisions 0
+timestep 26
+collisions 0
+timestep 27
+collisions 0
+timestep 28
+collisions 0
+timestep 29
+collisions 0
+timestep 30
+collisions 0
+timestep 31
+collisions 0
+timestep 32
+collisions 0
+timestep 33
+collisions 0
+timestep 34
+collisions 0
+timestep 35
+collisions 0
+timestep 36
+collisions 0
+timestep 37
+collisions 0
+timestep 38
+collisions 0
+timestep 39
+collisions 0
+timestep 40
+collisions 0
+timestep 41
+collisions 0
+timestep 42
+collisions 0
+timestep 43
+collisions 0
+timestep 44
+collisions 0
+timestep 45
+collisions 0
+timestep 46
+collisions 0
+timestep 47
+collisions 0
+timestep 48
+collisions 0
+timestep 49
+collisions 0
+timestep 50
+collisions 0
+timestep 51
+collisions 0
+timestep 52
+collisions 0
+timestep 53
+collisions 0
+timestep 54
+collisions 0
+timestep 55
+collisions 0
+timestep 56
+collisions 0
+timestep 57
+collisions 0
+timestep 58
+collisions 0
+timestep 59
+collisions 0
+timestep 60
+collisions 0
+timestep 61
+collisions 0
+timestep 62
+collisions 0
+timestep 63
+collisions 0
+timestep 64
+collisions 0
+timestep 65
+collisions 0
+timestep 66
+collisions 0
+timestep 67
+collisions 0
+timestep 68
+collisions 0
+timestep 69
+collisions 0
+timestep 70
+collisions 0
+timestep 71
+collisions 0
+timestep 72
+collisions 0
+timestep 73
+collisions 0
+timestep 74
+collisions 0
+timestep 75
+collisions 0
+timestep 76
+collisions 0
+timestep 77
+collisions 0
+timestep 78
+collisions 0
+timestep 79
+collisions 0
+timestep 80
+collisions 0
+timestep 81
+collisions 0
+timestep 82
+collisions 0
+timestep 83
+collisions 0
+timestep 84
+collisions 0
+timestep 85
+collisions 0
+timestep 86
+collisions 0
+timestep 87
+collisions 0
+timestep 88
+collisions 0
+timestep 89
+collisions 0
+timestep 90
+collisions 0
+timestep 91
+collisions 0
+timestep 92
+collisions 0
+timestep 93
+collisions 0
+timestep 94
+collisions 0
+timestep 95
+collisions 0
+timestep 96
+collisions 0
+timestep 97
+collisions 0
+timestep 98
+collisions 0
+timestep 99
+collisions 0
+timestep 100
+collisions 0
+100 timesteps took 6.157516 seconds
+collisions 0
+500 timesteps took 31.106667 seconds

@@ -22,3 +22,6 @@
 Final: 1324667 43s
 
 - r, delta_pos, delta_r made local in evolve
+- Read the logic and make optimisation
+  - central force optmisation
+  - mannual unroll

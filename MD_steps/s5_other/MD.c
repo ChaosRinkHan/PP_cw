@@ -16,17 +16,13 @@ void evolve(int count, double dt) {
   int i, j, k, l;
   double Size, temp, tempForce, tempGmass, tempFLI[3];
 
-  double r[Nbody + OFFSET] __attribute__((aligned(64)));
-  double delta_r[Npair + OFFSET] __attribute__((aligned(64)));
-  double delta_pos[Ndim][Npair + OFFSET] __attribute__((aligned(64)));
-
   /*
    * Loop over timesteps.
    */
   for (step = 1; step <= count; step++) {
     printf("timestep %d\ncollisions %d\n", step, collisions);
 
-    memset(r, 0., sizeof(r));
+    // memset(r, 0., sizeof(r));
     /* set the viscosity term in the force calculation */
     /* add the wind term in the force calculation */
     for (j = 0; j < Ndim; j++) {
@@ -37,21 +33,20 @@ void evolve(int count, double dt) {
     for (k = 0; k < Nbody; k++) {
       temp =
           pos[0][k] * pos[0][k] + pos[1][k] * pos[1][k] + pos[2][k] * pos[2][k];
-      r[k] = sqrt(temp);
-      // temp = sqrt(temp);
-      // tempGmass = GM * mass[i];
-      // f[0][i] -= force(tempGmass, pos[0][i], temp);
-      // f[1][i] -= force(tempGmass, pos[1][i], temp);
-      // f[2][i] -= force(tempGmass, pos[2][i], temp);
+      // r[k] = sqrt(temp);
+      temp = sqrt(temp);
+      tempGmass = GM * mass[k];
+      f[0][k] -= force(tempGmass, pos[0][k], temp);
+      f[1][k] -= force(tempGmass, pos[1][k], temp);
+      f[2][k] -= force(tempGmass, pos[2][k], temp);
     }
 
-    /* calculate central force */
-
-    for (l = 0; l < Ndim; l++) {
-      for (i = 0; i < Nbody; i++) {
-        f[l][i] -= force(GM * mass[i], pos[l][i], r[i]);
-      }
-    }
+    // for (i = 0; i < Nbody; i++) {
+    //   f[0][i] -= force(GM * mass[i], pos[0][i], r[i]);
+    //   f[1][i] -= force(GM * mass[i], pos[1][i], r[i]);
+    //   f[2][i] -= force(GM * mass[i], pos[2][i], r[i]);
+    // }
+    // }
 
     /* calculate pairwise separation of particles */
     for (l = 0; l < Ndim; l++) {

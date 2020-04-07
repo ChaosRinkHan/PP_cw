@@ -35,6 +35,8 @@ Final: 1324667 43s
 - pos[i][j] interchange         <- 1325637 34.5s
 - f[i][j] interchange           <- 1325663 34.1s
   - new_force inlined
-  - f can be local              
+  - f can be local              <- 1325733 34.6s not used
   - first twoo loop merged      <- 1325692 34.2s
 - velo[i][j] interchanged       <- 1325717 34.1s
+- Nbody, Npair calculated       <- 1325777 34.2s
+- mass

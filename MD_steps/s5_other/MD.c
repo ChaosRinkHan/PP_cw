@@ -9,34 +9,32 @@
 #include "coord.h"
 
 double force(double W, double delta, double r);
-// void new_force(int N, double *f, double *vis, double *velo, double wind);
 
 void evolve(int count, double dt) {
   int step;
   int i, j, k, l;
   double Size, temp, tempForce, tempGmass, tempFLI[3];
 
-  /*
-   * Loop over timesteps.
-   */
   for (step = 1; step <= count; step++) {
     printf("timestep %d\ncollisions %d\n", step, collisions);
 
+    // LOOP 1
     for (i = 0; i < Nbody; i++) {
       temp = 0;
       for (j = 0; j < Ndim; j++) {
         /* set the viscosity term in the force calculation */
         /* add the wind term in the force calculation */
         f[i][j] = -vis[i] * velo[i][j] - vis[i] * wind[j];
-
         temp += pos[i][j] * pos[i][j];
       }
       /* calculate distance from central mass */
+      /* calculate central force */
       temp = sqrt(temp);
       tempGmass = GM * mass[i];
       for (j = 0; j < Ndim; j++) f[i][j] -= force(tempGmass, pos[i][j], temp);
     }
 
+    // LOOP 2
     double delta_pos_new[Ndim], temp_norm;
     k = 0;
     for (i = 0; i < Nbody; i++) {
@@ -81,12 +79,12 @@ void evolve(int count, double dt) {
       f[i][2] += tempFLI[2];
     }
 
-    /* update positions */
-    /* update velocities */
-    for (i = 0; i < Nbody; i++){
-      // #pragma vector aligned
-       for (j = 0; j < Ndim; j++) {
+    // LOOP 3
+    for (i = 0; i < Nbody; i++) {
+      for (j = 0; j < Ndim; j++) {
+        /* update positions */
         pos[i][j] += dt * velo[i][j];
+        /* update velocities */
         velo[i][j] += dt * (f[i][j] / mass[i]);
       }
     }

@@ -21,7 +21,7 @@
 
 Final: 1324667 43s
 
-- r, delta_pos, delta_r made local in evolve
+- r, delta_pos, delta_r
   - r removed
   - delta_r removed
   - delta_pos removed           <- 1325591 34.1s
@@ -36,7 +36,7 @@ Final: 1324667 43s
 - f[i][j] interchange           <- 1325663 34.1s
   - new_force inlined
   - f can be local              <- 1325733 34.6s not used
-  - first twoo loop merged      <- 1325692 34.2s
+  - first two loop merged       <- 1325692 34.2s
 - velo[i][j] interchanged       <- 1325717 34.1s
 - Nbody, Npair calculated       <- 1325777 34.2s
-- mass
+- save calculation for mass     <- TBT

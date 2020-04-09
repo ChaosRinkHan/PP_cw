@@ -16,7 +16,7 @@ double error(double v1, double v2) {
   // Test if NaN exists
   if (isnan(v1) != isnan(v2)) {
     printf("Unmatched NaN detected\n");
-    return 1;
+    return 1.;
   }
 
   double diff = fabs(v1 - v2);

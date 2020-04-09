@@ -1,0 +1,48 @@
+cat: changelog.md: No such file or directory
+==38570== Cachegrind, a cache and branch-prediction profiler
+==38570== Copyright (C) 2002-2015, and GNU GPL'd, by Nicholas Nethercote et al.
+==38570== Using Valgrind-3.11.0 and LibVEX; rerun with -h for copyright info
+==38570== Command: ./MD 4
+==38570== 
+--38570-- warning: L3 cache found, using its data for the LL simulation.
+--38570-- warning: specified LL cache: line_size 64  assoc 20  total_size 47,185,920
+--38570-- warning: simulated LL cache: line_size 64  assoc 23  total_size 48,234,496
+vex amd64->IR: unhandled instruction bytes: 0xF3 0xF 0x1E 0xFA 0xE9 0x7 0x0 0x0
+vex amd64->IR:   REX=0 REX.W=0 REX.R=0 REX.X=0 REX.B=0
+vex amd64->IR:   VEX=0 VEX.L=0 VEX.nVVVV=0x0 ESC=0F
+vex amd64->IR:   PFX.66=0 PFX.F2=0 PFX.F3=1
+==38570== valgrind: Unrecognised instruction at address 0x408560.
+==38570==    at 0x408560: sqrt (in /lustre/home/d171/s1898201/PP_cw/MD_raw/C/MD)
+==38570==    by 0x406ED4: main (control.c:75)
+==38570== Your program just tried to execute an instruction that Valgrind
+==38570== did not recognise.  There are two possible reasons for this.
+==38570== 1. Your program has a bug and erroneously jumped to a non-code
+==38570==    location.  If you are running Memcheck and you just saw a
+==38570==    warning about a bad jump, it's probably your program's fault.
+==38570== 2. The instruction is legitimate but Valgrind doesn't handle it,
+==38570==    i.e. it's Valgrind's fault.  If you think this is the case or
+==38570==    you are not sure, please let us know and we'll try to fix it.
+==38570== Either way, Valgrind will now raise a SIGILL signal which will
+==38570== probably kill your program.
+==38570== 
+==38570== Process terminating with default action of signal 4 (SIGILL)
+==38570==  Illegal opcode at address 0x408560
+==38570==    at 0x408560: sqrt (in /lustre/home/d171/s1898201/PP_cw/MD_raw/C/MD)
+==38570==    by 0x406ED4: main (control.c:75)
+==38570== 
+==38570== I   refs:      74,055,830
+==38570== I1  misses:         1,567
+==38570== LLi misses:         1,542
+==38570== I1  miss rate:       0.00%
+==38570== LLi miss rate:       0.00%
+==38570== 
+==38570== D   refs:      27,962,430  (18,838,197 rd   + 9,124,233 wr)
+==38570== D1  misses:        45,284  (    24,371 rd   +    20,913 wr)
+==38570== LLd misses:        19,380  (    11,895 rd   +     7,485 wr)
+==38570== D1  miss rate:        0.2% (       0.1%     +       0.2%  )
+==38570== LLd miss rate:        0.1% (       0.1%     +       0.1%  )
+==38570== 
+==38570== LL refs:           46,851  (    25,938 rd   +    20,913 wr)
+==38570== LL misses:         20,922  (    13,437 rd   +     7,485 wr)
+==38570== LL miss rate:         0.0% (       0.0%     +       0.1%  )
+/var/spool/PBS/mom_priv/jobs/1328307.indy2-login0.SC: line 23: 38570 Illegal instruction     valgrind --tool=cachegrind --cachegrind-out-file=report/cachegrind.out ./MD 4

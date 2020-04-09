@@ -3,7 +3,7 @@ OBJ=$(SRC:.c=.o)
 CC=icc 
 CFLAGS= -g -Ofast -ipo\
  -no-prec-div -no-prec-sqrt\
- -Wall -Winline -pg
+ -Wall -pg
 REPORT_FLAGS= -qopt-report-file=report/ipo.optout -qopt-report=5
 
 all: MD

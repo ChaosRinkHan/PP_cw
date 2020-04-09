@@ -54,13 +54,15 @@ int main(int argc, char *argv[]) {
   /*
    * Run Nstep timesteps and time how long it took
    */
-
+  double timeAll = 0.;
   tstart = second();
+
   for (j = 1; j <= Nsave; j++) {
     start = second();
     evolve(Nstep, dt);
     stop = second();
-    printf("%d timesteps took %f seconds\n", Nstep, stop - start);
+    timeAll += stop - start;
+    printf("%d timesteps took %f seconds\nTotal time %f\n", Nstep, stop - start, timeAll);
     printf("collisions %d\n", collisions);
 
     /* write final result to a file */
@@ -80,8 +82,8 @@ int main(int argc, char *argv[]) {
     }
     fclose(out);
   }
-  tstop = second();
-  printf("%d timesteps took %f seconds\n", Nsave * Nstep, tstop - tstart);
+  // tstop = second();
+  // printf("%d timesteps took %f seconds\n", Nsave * Nstep, tstop - tstart);
 }
 
 double second() {
